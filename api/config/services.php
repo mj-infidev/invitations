@@ -14,6 +14,14 @@ return [
     |
     */
 
+    // Customer sign-in (Laravel Socialite, redirect flow). The redirect URI must be
+    // listed exactly under the OAuth client's Authorized redirect URIs.
+    'google' => [
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

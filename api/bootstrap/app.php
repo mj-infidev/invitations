@@ -15,6 +15,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Requests from the Vue apps (SANCTUM_STATEFUL_DOMAINS) get the session cookie
+        // and CSRF check: customers and admins sign in with cookies, not tokens.
+        $middleware->statefulApi();
+
         $middleware->trustProxies(at: '*');
 
         // No web login page exists: API guests get a 401, never a redirect to route('login').

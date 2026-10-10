@@ -43,7 +43,7 @@ invitations/
 | Scroll-driven scenes | GSAP with its ScrollTrigger plugin |
 | Small looping animations | Lottie (`lottie-web`) |
 | Google sign-in | Laravel Socialite |
-| API tokens for the Vue apps | Laravel Sanctum |
+| Session cookies for the Vue apps | Laravel Sanctum (SPA mode) |
 | Payments | Razorpay PHP SDK (`razorpay/razorpay`) |
 | Image resize and preview image | Intervention Image |
 | File storage | Laravel filesystem, public disk to start |
@@ -247,9 +247,9 @@ Four groups, each with its own access rule. A customer can reach only their own 
 | GET | `/api/templates` | Anyone | List active templates |
 | GET | `/api/templates/{slug}` | Anyone | One template with its form fields |
 | GET | `/api/auth/google/redirect` | Anyone | Start Google sign-in |
-| GET | `/api/auth/google/callback` | Anyone | Finish sign-in, issue token |
+| GET | `/api/auth/google/callback` | Anyone | Finish sign-in with a session cookie, return to the client |
 | POST | `/api/webhooks/razorpay` | Razorpay | Payment events, signature checked |
-| GET | `/api/me` | Customer | Current user |
+| GET | `/api/me` | Anyone | The signed-in customer, or `null` |
 | POST | `/api/auth/logout` | Customer |  |
 | GET | `/api/invitations` | Customer | My invitations |
 | POST | `/api/invitations` | Customer | Create a draft from a template |
@@ -401,7 +401,10 @@ Nine steps, one per coding session. The animated page comes second, before login
 - **Step 4:** invitations use soft delete, so the database cascade on `invitation_media` never fires when a customer deletes a draft. The delete code must remove the media rows and their files from disk itself.
 - **Step 4:** a new draft gets `data.avatar` = `Avatar::defaults()`, and saving the form must not drop it. Validate `venue.map_url` as an http(s) link; the page already refuses anything else.
 - **Step 5:** until the preview picture exists, the page has no `og:image` tag.
+- **Step 6:** decide whether the admin app gets its own session cookie, separate from customers. Today both apps share one cookie, with a separate sign-in for each guard inside it.
 - **Step 8:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
+- **Before launch:** Google blocks its sign-in inside in-app browsers (Instagram, Facebook), where many links opened from those apps land. The sign-in page needs an "open in your browser" hint, and this is a reason to add phone OTP later.
+- **Before launch:** the Google OAuth client needs the production redirect URI (`https://<domain>/api/auth/google/callback`), and the consent screen must be published out of Testing.
 
 **Settled in Step 2**
 
@@ -416,6 +419,15 @@ Nine steps, one per coding session. The animated page comes second, before login
 - A root `.htaccess` blocks Apache from serving the project folder, as in nancofills; XAMPP was serving `api/.env` and `.git` to the local network.
 - Tamil and English never share a screen. A "both" invitation shows one language at a time, with a small தமிழ் / English switch, opening in English for now. A language left blank is not filled from the other, so the Step 4 form must require every language the invitation shows.
 - In Tamil view every character, digits and punctuation included, is drawn by a Tamil font. Fonts are self-hosted: Tiro Tamil (Tamil names and headings, kept until the Step 8 review), Anek Tamil (Tamil body), Great Vibes (English names), Cormorant Garamond (English headings and body, set a size up).
+
+**Settled in Step 3**
+
+- Customers sign in with Google through Socialite's redirect flow and stay signed in with an HttpOnly session cookie (Sanctum SPA mode), not API tokens. "Remember me" is on.
+- Two session guards: `web` for customers, `admin` for admins. Customer routes use `auth:web`, admin routes `auth:admin`, never `auth:sanctum`. Customer sign-out leaves an admin signed in on the same cookie.
+- The two Google routes live in `routes/web.php` (Socialite needs the session between them) but answer under `/api/auth/google/`.
+- An account is found by Google id, then by email only when Google has verified it; an unverified email is never stored.
+- The two Vue apps' addresses are in Sanctum's stateful list (`config/sanctum.php`, from `FRONTEND_CLIENT_URL` and `FRONTEND_ADMIN_URL`).
+- Sign-in cannot be tested from a phone on the local network: Google refuses redirect addresses on a private IP.
 
 **First message to give Claude in the IDE**
 

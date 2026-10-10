@@ -38,25 +38,35 @@ return [
     |
     */
 
+    /*
+    | Customers and admins sign in with session cookies (Sanctum's SPA mode), each
+    | through its own guard. Laravel keeps each guard's sign-in under its own key
+    | in the session, so one cookie can carry both — the admin app and the client
+    | share a cookie locally (localhost) and in production (both call
+    | oursite.com/api) — without either counting as the other.
+    |
+    | Customer routes use `auth:web`, admin routes `auth:admin`. Never
+    | `auth:sanctum`: it accepts whichever of the two is signed in.
+    */
+
     'guards' => [
+        // Customers (`users`), signed in with Google.
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
 
-        // Customers. Sanctum would otherwise accept a token from any model, so an
-        // admin's token could pass `auth:sanctum` with $request->user() an Admin —
-        // and admin id 1 would then "own" customer 1's invitations.
+        // Admins (`admins`, kept apart from customers). Login arrives in Step 6.
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+
+        // Not used by any route. Limited to `users` so that, if it ever is, an
+        // admin's token can't pass as a customer and "own" customer 1's invitations.
         'sanctum' => [
             'driver' => 'sanctum',
             'provider' => 'users',
-        ],
-
-        // Admins (the `admins` table, kept apart from customers). Admin routes use
-        // `auth:admin`; a customer's token is rejected here for the same reason.
-        'admin' => [
-            'driver' => 'sanctum',
-            'provider' => 'admins',
         ],
     ],
 

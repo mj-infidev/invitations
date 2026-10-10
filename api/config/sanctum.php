@@ -5,6 +5,13 @@ use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Laravel\Sanctum\Http\Middleware\AuthenticateSession;
 use Laravel\Sanctum\Sanctum;
 
+// "http://localhost:5173" -> "localhost:5173", the form the stateful list uses.
+$hostWithPort = function (string $url): string {
+    $port = parse_url($url, PHP_URL_PORT);
+
+    return parse_url($url, PHP_URL_HOST).($port ? ":{$port}" : '');
+};
+
 return [
 
     /*
@@ -18,11 +25,14 @@ return [
     |
     */
 
+    // The two Vue apps (FRONTEND_CLIENT_URL, FRONTEND_ADMIN_URL) are added to the
+    // defaults: requests from them get the session cookie customers and admins
+    // sign in with. Without them nobody stays signed in.
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
-        '%s%s',
+        '%s%s,%s',
         'localhost,localhost:3000,127.0.0.1,127.0.0.1:8000,::1',
         Sanctum::currentApplicationUrlWithPort(),
-        // Sanctum::currentRequestHost(),
+        $hostWithPort(env('FRONTEND_CLIENT_URL', 'http://localhost:5173')).','.$hostWithPort(env('FRONTEND_ADMIN_URL', 'http://localhost:5174')),
     ))),
 
     /*
