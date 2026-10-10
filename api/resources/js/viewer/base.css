@@ -16,11 +16,13 @@
     --cream: #fff6e3;
     --ink: #3b1a10;
 
-    /* Tamil web fonts are hosted and loaded in Step 7; until then the phone's own. */
-    --font-tamil-serif: 'Noto Serif Tamil', 'Nirmala UI', 'Latha', serif;
-    --font-tamil-sans: 'Noto Sans Tamil', 'Nirmala UI', 'Latha', system-ui, sans-serif;
-    --font-serif: Georgia, 'Times New Roman', serif;
-    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    /* Self-hosted (Fontsource, bundled by Vite); the phone's own fonts are the fallback.
+       Only the weights loaded in the template's index.js exist: 400 for the Tamil
+       heading and script fonts, 400/600 Anek Tamil, 500/600 Cormorant Garamond. */
+    --font-tamil-heading: 'Tiro Tamil', 'Noto Serif Tamil', 'Nirmala UI', 'Latha', serif;
+    --font-tamil-body: 'Anek Tamil', 'Noto Sans Tamil', 'Nirmala UI', 'Latha', sans-serif;
+    --font-en-name: 'Great Vibes', 'Segoe Script', cursive;
+    --font-en: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
 
     --gutter: max(20px, env(safe-area-inset-left));
     color-scheme: light;
@@ -35,7 +37,8 @@ html, body {
 }
 
 body {
-    font-family: var(--font-sans);
+    font-family: var(--font-en);
+    font-weight: 500;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
@@ -46,7 +49,7 @@ p, h1, h2, h3, figure { margin: 0; }
 
 /* Tamil runs longer and stacks vowel signs above and below: more line height. */
 :lang(ta) {
-    font-family: var(--font-tamil-sans);
+    font-family: var(--font-tamil-body);
     line-height: 1.6;
 }
 
@@ -89,15 +92,64 @@ svg { display: block; }
     text-align: center;
 }
 
-/* ── Text in one or two languages (<x-bi>) ──────────────────── */
+/* ── One language at a time ─────────────────────────────────── */
 
 .bi { display: block; }
 
-/* English under Tamil when both are shown. */
-.bi--second {
-    font-size: 0.7em;
-    opacity: 0.85;
-    margin-top: 0.1em;
+/* A "both" invitation prints every text in Tamil and English; only the language
+   in <html lang> shows, so the two never share a screen. The switch changes it. */
+html[lang="en"] :is(.invitation, .watermark) [lang="ta"],
+html[lang="ta"] :is(.invitation, .watermark) [lang="en"] {
+    display: none !important;
+}
+
+/* Tamil view: every character comes from the Tamil fonts, digits and punctuation
+   too. Anything styled with the English fonts falls to their Tamil counterparts. */
+html[lang="ta"] {
+    --font-en: var(--font-tamil-body);
+    --font-en-name: var(--font-tamil-heading);
+}
+
+/* Cormorant Garamond has small lowercase letters: English reads a size up. */
+html[lang="en"] { font-size: 112.5%; }
+
+.lang-switch {
+    position: fixed;
+    z-index: 950;
+    top: max(12px, env(safe-area-inset-top));
+    right: max(12px, env(safe-area-inset-right));
+    display: flex;
+    padding: 3px;
+    border: 1px solid rgb(224 169 59 / 0.7);
+    border-radius: 999px;
+    background: rgb(46 7 17 / 0.75);
+    /* Anek Tamil has Latin too, so the switch reads the same in both views. */
+    font-family: var(--font-tamil-body);
+    font-size: 13px;
+    line-height: 1;
+}
+
+.lang-switch button {
+    min-width: 44px;
+    min-height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--gold-light);
+    font: inherit;
+    cursor: pointer;
+}
+
+.lang-switch button[aria-pressed="true"] {
+    background: var(--gold);
+    color: var(--maroon-deep);
+    font-weight: 600;
+}
+
+.lang-switch button:focus-visible {
+    outline: 2px solid var(--gold-light);
+    outline-offset: 2px;
 }
 
 .eyebrow {
@@ -121,7 +173,7 @@ svg { display: block; }
     border-radius: 999px;
     background: var(--gold);
     color: var(--maroon-deep);
-    font-weight: 700;
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -158,7 +210,6 @@ svg { display: block; }
     color: var(--gold-light);
 }
 
-.scroll-hint .bi--second { font-size: 0.75rem; }
 
 .scroll-hint__arrow {
     width: 26px;
@@ -201,7 +252,7 @@ svg { display: block; }
 
 .watermark span {
     font-size: 1.6rem;
-    font-weight: 800;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: nowrap;

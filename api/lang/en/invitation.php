@@ -20,7 +20,7 @@ return [
     'open_in_maps' => 'Open in Maps',
     'other_events' => 'Other events',
     'photos' => 'Our moments',
-    'photo' => 'Photo',
+    'photo' => 'Photo :n',
     'welcome' => 'We warmly await your presence',
     'made_with' => 'Made with :brand',
     'music_play' => 'Play music',

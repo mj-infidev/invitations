@@ -2,6 +2,15 @@
  * Tamil Hindu wedding. Vite entry loaded by the Blade page
  * resources/views/invitations/templates/tamil-hindu-wedding.blade.php.
  */
+// Fonts, self-hosted. Each file declares every subset with a unicode-range, and
+// the browser downloads only the Tamil and Latin pieces the page uses.
+// Tamil fonts are reviewed at Step 7.
+import '@fontsource/tiro-tamil/400.css'
+import '@fontsource/anek-tamil/400.css'
+import '@fontsource/anek-tamil/600.css'
+import '@fontsource/great-vibes/400.css'
+import '@fontsource/cormorant-garamond/500.css'
+import '@fontsource/cormorant-garamond/600.css'
 import '../../base.css'
 import './style.css'
 import { startViewer } from '../../core'

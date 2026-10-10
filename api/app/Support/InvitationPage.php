@@ -11,14 +11,17 @@ use Illuminate\Support\Carbon;
  * WhatsApp preview tags, photos, and the JSON the viewer script reads.
  *
  * Text values come in the shape of a bilingual field ({"ta": …, "en": …}),
- * already narrowed to the languages guests see; <x-bi> prints them.
+ * already narrowed to the languages guests see; <x-bi> prints them. A "both"
+ * invitation prints every text in both languages, but guests see one at a
+ * time: the page shows the language in <html lang>, which the viewer's
+ * தமிழ் / English switch changes. Tamil and English never share a screen.
  */
 class InvitationPage
 {
     /** `data` with avatar defaults filled in and, for the demo, dates moved forward. */
     public readonly array $data;
 
-    /** Languages printed, in display order: Tamil first when both. */
+    /** Languages printed. */
     public readonly array $languages;
 
     public readonly bool $isDemo;
@@ -39,10 +42,19 @@ class InvitationPage
         $this->data = $this->isDemo ? self::moveDemoDates($data) : $data;
     }
 
-    /** The page's `<html lang>`: the first language shown. */
+    /**
+     * The page's `<html lang>`, which is also the language shown. A "both"
+     * invitation opens in English for now; guests switch with the toggle.
+     */
     public function lang(): string
     {
-        return $this->languages[0];
+        return $this->invitation->language === 'ta' ? 'ta' : 'en';
+    }
+
+    /** Whether guests get the தமிழ் / English switch. */
+    public function hasLanguageSwitch(): bool
+    {
+        return $this->languages === ['ta', 'en'];
     }
 
     public function get(string $key, mixed $default = null): mixed
@@ -51,9 +63,9 @@ class InvitationPage
     }
 
     /**
-     * A bilingual field's text in the languages shown, blanks dropped. If none
-     * of those languages was filled in, the other one is shown rather than
-     * nothing: a name typed only in English still appears on a Tamil invitation.
+     * A bilingual field's text in the languages shown, blanks dropped. A
+     * language left blank is not filled from the other one: that would put
+     * English on a Tamil screen. The form requires every language shown.
      */
     public function text(string|array|null $value): array
     {
@@ -65,14 +77,6 @@ class InvitationPage
         foreach ($this->languages as $lang) {
             if (filled($value[$lang] ?? null)) {
                 $text[$lang] = trim($value[$lang]);
-            }
-        }
-
-        if ($text === []) {
-            foreach (['ta', 'en'] as $lang) {
-                if (filled($value[$lang] ?? null)) {
-                    return [$lang => trim($value[$lang])];
-                }
             }
         }
 

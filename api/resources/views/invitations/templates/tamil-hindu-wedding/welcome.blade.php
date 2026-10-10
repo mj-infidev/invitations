@@ -125,16 +125,20 @@
             @php
                 $bride = $page->text($page->get('bride.name'));
                 $groom = $page->text($page->get('groom.name'));
-                // One "bride ❦ groom" line per language, from the names typed in it.
-                $names = collect($page->languages)
-                    ->filter(fn ($lang) => isset($bride[$lang], $groom[$lang]))
-                    ->mapWithKeys(fn ($lang) => [$lang => "{$bride[$lang]} ❦ {$groom[$lang]}"])
-                    ->all();
             @endphp
-            <x-bi as="p" class="welcome__names" :text="$names" />
+            {{-- One "bride ✿ groom" line per language, from the names typed in it. --}}
+            @foreach ($page->languages as $lang)
+                @if (isset($bride[$lang], $groom[$lang]))
+                    <p class="welcome__names bi" lang="{{ $lang }}">
+                        {{ $bride[$lang] }}
+                        @include('invitations.templates.tamil-hindu-wedding.ornament')
+                        {{ $groom[$lang] }}
+                    </p>
+                @endif
+            @endforeach
             <x-bi as="p" class="welcome__line" :text="$page->label('welcome')" />
             <a class="brand" href="{{ config('invitations.brand.url') }}" target="_blank" rel="noopener">
-                {{ implode(' · ', $page->label('made_with', ['brand' => config('invitations.brand.name')])) }}
+                <x-bi :text="$page->label('made_with', ['brand' => config('invitations.brand.name')])" />
             </a>
         </div>
     </div>

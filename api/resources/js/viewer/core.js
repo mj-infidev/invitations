@@ -11,6 +11,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { startCountdown } from './countdown'
 import { setupMusic } from './music'
+import { setupLanguageSwitch } from './language'
 import { loadLotties } from './lottie'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -27,6 +28,8 @@ export function startViewer({ scenes, lotties }) {
   const config = JSON.parse(document.getElementById('invitation-data').textContent)
   startCountdown(config.muhurthamAt)
   setupMusic(config.music)
+  // Tamil runs longer than English: every pin and scene length is measured again.
+  setupLanguageSwitch(() => ScrollTrigger.refresh())
 
   // The address bar showing and hiding on phones resizes the window; re-measuring
   // every pin on each of those makes the page jump.

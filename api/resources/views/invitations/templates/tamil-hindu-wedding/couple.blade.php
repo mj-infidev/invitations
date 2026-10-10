@@ -3,13 +3,13 @@
     // Mango leaves and marigolds along the thoranam rope, a curve from (0,10) through (400,10).
     $ropeY = fn (float $x) => 10 + 40 * ($x / 400) * (1 - $x / 400);
 
-    // Names wrap between words, never inside one: the CSS sizes them so the longest word fits.
-    $longestWord = collect([$page->get('bride.name'), $page->get('groom.name')])
-        ->flatMap(fn ($name) => is_array($name) ? array_values($name) : [])
+    // Names wrap between words, never inside one: the CSS sizes each language's
+    // names so its longest word fits. Counted in characters; Tamil letters run
+    // about a quarter wider than Latin ones at the same size.
+    $longestWord = fn (string $lang) => collect([$page->get("bride.name.{$lang}"), $page->get("groom.name.{$lang}")])
         ->flatMap(fn ($text) => preg_split('/\s+/u', (string) $text))
-        // Tamil letters run about a quarter wider than Latin ones at the same size.
         ->map(fn ($word) => mb_strlen($word) + 0.25 * preg_match_all('/[\x{0B80}-\x{0BFF}]/u', $word))
-        ->max() ?? 0;
+        ->max() ?: 1;
 @endphp
 <section class="scene scene--couple" data-scene="couple" data-length="150">
     <div class="scene__stage">
@@ -53,9 +53,9 @@
 
         <div class="scene__content couple__names">
             <x-bi as="p" class="couple__role" :text="$page->label('bride')" />
-            <h1 class="couple__heading" style="--longest-word: {{ $longestWord }}">
+            <h1 class="couple__heading" style="--longest-ta: {{ $longestWord('ta') }}; --longest-en: {{ $longestWord('en') }}">
                 <span class="couple__name"><x-bi :text="$page->text($page->get('bride.name'))" /></span>
-                <span class="couple__and" aria-hidden="true">❦</span>
+                <span class="couple__and">@include('invitations.templates.tamil-hindu-wedding.ornament')</span>
                 <span class="couple__name"><x-bi :text="$page->text($page->get('groom.name'))" /></span>
             </h1>
             <x-bi as="p" class="couple__role" :text="$page->label('groom')" />

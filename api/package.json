@@ -12,6 +12,10 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@fontsource/anek-tamil": "^5.3.0",
+        "@fontsource/cormorant-garamond": "^5.3.0",
+        "@fontsource/great-vibes": "^5.3.0",
+        "@fontsource/tiro-tamil": "^5.3.0",
         "gsap": "^3.15.0",
         "lottie-web": "^5.13.0"
     }

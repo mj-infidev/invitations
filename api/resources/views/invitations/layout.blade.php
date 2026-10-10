@@ -30,15 +30,23 @@
     @vite($page->viewerEntry())
 </head>
 <body>
+    @if ($page->hasLanguageSwitch())
+        {{-- One language at a time. Sets <html lang>, which decides what shows (base.css). --}}
+        <div class="lang-switch" role="group" aria-label="மொழி / Language">
+            <button type="button" lang="ta" data-lang="ta" aria-pressed="{{ $page->lang() === 'ta' ? 'true' : 'false' }}">தமிழ்</button>
+            <button type="button" lang="en" data-lang="en" aria-pressed="{{ $page->lang() === 'en' ? 'true' : 'false' }}">English</button>
+        </div>
+    @endif
+
     <main class="invitation">
         @yield('scenes')
     </main>
 
     @if ($page->music())
+        {{-- Labels in each language; the script names the button in the one shown. --}}
         <button type="button" class="music-toggle" data-music
-                data-label-play="{{ implode(' / ', $page->label('music_play')) }}"
-                data-label-pause="{{ implode(' / ', $page->label('music_pause')) }}"
-                aria-pressed="false" aria-label="{{ implode(' / ', $page->label('music_play')) }}">
+                data-labels="{{ json_encode(['play' => $page->label('music_play'), 'pause' => $page->label('music_pause')], JSON_UNESCAPED_UNICODE) }}"
+                aria-pressed="false" aria-label="{{ $page->label('music_play')[$page->lang()] }}">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path class="music-toggle__note" d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
         </button>
     @endif
@@ -48,7 +56,7 @@
         <div class="watermark" aria-hidden="true">
             <div class="watermark__inner">
                 @for ($i = 0; $i < 24; $i++)
-                    <span>{{ implode(' · ', $page->label('preview')) }}</span>
+                    <span><x-bi :text="$page->label('preview')" /></span>
                 @endfor
             </div>
         </div>

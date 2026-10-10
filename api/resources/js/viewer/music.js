@@ -6,6 +6,9 @@ export function setupMusic(src) {
   const button = document.querySelector('[data-music]')
   if (!button || !src) return
 
+  // { play: { ta, en }, pause: { ta, en } }: the button is named in the language shown.
+  const labels = JSON.parse(button.dataset.labels)
+
   const audio = new Audio()
   audio.preload = 'none'
   audio.loop = true
@@ -13,9 +16,10 @@ export function setupMusic(src) {
 
   const show = () => {
     const playing = !audio.paused
+    const names = labels[playing ? 'pause' : 'play']
     button.classList.toggle('is-playing', playing)
     button.setAttribute('aria-pressed', String(playing))
-    button.setAttribute('aria-label', playing ? button.dataset.labelPause : button.dataset.labelPlay)
+    button.setAttribute('aria-label', names[document.documentElement.lang] ?? Object.values(names)[0])
   }
 
   button.addEventListener('click', async () => {
@@ -30,6 +34,8 @@ export function setupMusic(src) {
     }
     show()
   })
+
+  document.addEventListener('viewer:language', show)
 
   // Stop when the guest switches to another app or tab.
   document.addEventListener('visibilitychange', () => {

@@ -413,6 +413,8 @@ Eight steps, one per coding session. The animated page comes second, before logi
 - The invitation page runs without a session, so guest visits write nothing and set no cookies.
 - An expired or disabled invitation answers 410 with the "has ended" page.
 - A root `.htaccess` blocks Apache from serving the project folder, as in nancofills; XAMPP was serving `api/.env` and `.git` to the local network.
+- Tamil and English never share a screen. A "both" invitation shows one language at a time, with a small தமிழ் / English switch, opening in English for now. A language left blank is not filled from the other, so the Step 4 form must require every language the invitation shows.
+- In Tamil view every character, digits and punctuation included, is drawn by a Tamil font. Fonts are self-hosted: Tiro Tamil (Tamil names and headings, kept until the Step 7 review), Anek Tamil (Tamil body), Great Vibes (English names), Cormorant Garamond (English headings and body, set a size up).
 
 **First message to give Claude in the IDE**
 
