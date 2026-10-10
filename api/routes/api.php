@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvitationController;
 use App\Http\Controllers\Api\InvitationMediaController;
@@ -36,4 +37,36 @@ Route::middleware('auth:web')->group(function () {
 
     Route::post('/invitations/{invitation}/checkout', [PaymentController::class, 'checkout'])->middleware('throttle:checkout');
     Route::post('/payments/verify', [PaymentController::class, 'verify'])->middleware('throttle:checkout');
+});
+
+/*
+ * The admin panel, on its own session cookie (App\Http\Middleware\UseAdminSession).
+ * Every route but signing in needs `auth:admin`; customers' sessions never reach these.
+ */
+Route::prefix('admin')->group(function () {
+    Route::get('/csrf-cookie', [Admin\AuthController::class, 'csrfCookie']);
+    Route::post('/login', [Admin\AuthController::class, 'login'])->middleware('throttle:20,1');
+    Route::get('/me', [Admin\AuthController::class, 'me']);
+
+    Route::middleware('auth:admin')->group(function () {
+        Route::post('/logout', [Admin\AuthController::class, 'logout']);
+        Route::get('/stats', Admin\DashboardController::class);
+
+        Route::get('/invitations', [Admin\InvitationController::class, 'index']);
+        Route::get('/invitations/{invitation}', [Admin\InvitationController::class, 'show']);
+        Route::put('/invitations/{invitation}', [Admin\InvitationController::class, 'update']);
+        Route::post('/invitations/{invitation}/disable', [Admin\InvitationController::class, 'disable']);
+        Route::post('/invitations/{invitation}/enable', [Admin\InvitationController::class, 'enable']);
+        Route::post('/invitations/{invitation}/mark-paid', [Admin\InvitationController::class, 'markPaid']);
+        Route::delete('/invitations/{invitation}/media/{media}', [Admin\InvitationController::class, 'removeMedia']);
+
+        Route::get('/orders', [Admin\OrderController::class, 'index']);
+        Route::post('/orders/{order}/mark-paid', [Admin\OrderController::class, 'markPaid']);
+
+        Route::get('/templates', [Admin\TemplateController::class, 'index']);
+        Route::put('/templates/{template}', [Admin\TemplateController::class, 'update']);
+
+        Route::get('/users', [Admin\UserController::class, 'index']);
+        Route::get('/users/{user}', [Admin\UserController::class, 'show']);
+    });
 });

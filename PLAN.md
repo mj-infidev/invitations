@@ -176,7 +176,7 @@ Seven tables cover version 1. Rules for all of them:
 | payload | JSON |  |
 | processed\_at | timestamp, nullable |  |
 
-Relations: a user has many invitations and orders; an invitation belongs to one template, has many media files, and has many orders (a failed payment leaves an order behind). Tables for RSVPs and coupons come later.
+Relations: a user has many invitations and orders; an invitation belongs to one template, has many media files, and has many orders (a failed payment leaves an order behind). Tables for RSVPs and coupons come later. Step 6 added an eighth table, `admin_actions` (the admin log), and `orders.paid_by_admin_id`; see Settled in Step 6.
 
 **Settled in Step 1**
 
@@ -260,14 +260,19 @@ Four groups, each with its own access rule. A customer can reach only their own 
 | DELETE | `/api/invitations/{id}/media/{mediaId}` | Customer | Remove a photo |
 | POST | `/api/invitations/{id}/checkout` | Customer | Create a Razorpay order |
 | POST | `/api/payments/verify` | Customer | Confirm payment after checkout |
-| POST | `/api/admin/login` | Admin |  |
+| GET | `/api/admin/csrf-cookie` | Anyone | Start the admin session (its own cookie) |
+| POST | `/api/admin/login`, `/api/admin/logout` | Admin | Email and password; logout |
+| GET | `/api/admin/me` | Anyone | The signed-in admin, or `null` |
 | GET | `/api/admin/stats` | Admin | Sales and counts |
 | GET | `/api/admin/invitations` | Admin | Search and list all |
-| PUT | `/api/admin/invitations/{id}` | Admin | Fix details, disable |
-| GET | `/api/admin/orders` | Admin | List with status filter |
-| POST | `/api/admin/orders/{id}/mark-paid` | Admin | Unlock by hand |
-| GET, POST, PUT | `/api/admin/templates` | Admin | Manage templates and prices |
-| GET | `/api/admin/users` | Admin | Customer list |
+| GET, PUT | `/api/admin/invitations/{id}` | Admin | Everything the edit screen needs; fix details |
+| POST | `/api/admin/invitations/{id}/disable`, `/enable` | Admin | With a reason |
+| POST | `/api/admin/invitations/{id}/mark-paid` | Admin | Paid outside Razorpay: makes an order and marks it paid |
+| DELETE | `/api/admin/invitations/{id}/media/{mediaId}` | Admin | Remove a photo, with a reason |
+| GET | `/api/admin/orders` | Admin | List with status filter and search |
+| POST | `/api/admin/orders/{id}/mark-paid` | Admin | Unlock by hand, with a reason |
+| GET, PUT | `/api/admin/templates` | Admin | Prices, on or off, photo limit |
+| GET | `/api/admin/users`, `/api/admin/users/{id}` | Admin | Customer list; one customer's invitations |
 
 ## Invitation page and WhatsApp preview
 
@@ -398,7 +403,6 @@ Nine steps, one per coding session. The animated page comes second, before login
 
 **Notes for later steps**
 
-- **Step 6:** decide whether the admin app gets its own session cookie, separate from customers. Today both apps share one cookie, with a separate sign-in for each guard inside it.
 - **Step 8:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
 - **Before launch:** Google blocks its sign-in inside in-app browsers (Instagram, Facebook), where many links opened from those apps land. The sign-in page needs an "open in your browser" hint, and this is a reason to add phone OTP later.
 - **Step 7 (design pass):** consider drawing the WhatsApp picture in the customer's browser at publish, so Tamil names can appear on it. The server draws it with GD, which can't shape Tamil (vowel signs land in the wrong place), so today the picture carries the English names, and a Tamil-only invitation's picture shows a large உ and the date instead.
@@ -449,6 +453,15 @@ Nine steps, one per coding session. The animated page comes second, before login
 - Locally, Razorpay can't reach the webhook: `php artisan payments:replay-webhook {razorpay_order_id}` fetches the order's real test payment, signs the event with `RAZORPAY_WEBHOOK_SECRET` and posts it to our webhook.
 - After paying: a Share page with the link, Copy, and Share on WhatsApp (a short message in the invitation's language). A cancelled or failed payment leaves the draft as it was, with a message; if the verify call fails, the builder waits up to a minute for the webhook before saying so.
 - Razorpay's Checkout asks for a mobile number before paying (we don't collect one).
+
+**Settled in Step 6**
+
+- The admin panel has its own session cookie, separate from customers': `invitations_admin_session`, sent only to `/api/admin`, 8 hours, ending when the browser closes, `SameSite=Strict`, no "remember me"; its CSRF cookie is `XSRF-TOKEN-ADMIN` (`UseAdminSession`, our `ValidateCsrfToken` and `EnsureFrontendRequestsAreStateful`). Admin routes use `auth:admin`; a customer session gets 401 there.
+- Sign-in: the same message for a wrong email or password; 5 failures per email and address lock it for a minute. Admins are added with `php artisan admin:create` (name, email, password typed twice); there is no screen for managing admins yet.
+- Every admin action is logged in a new eighth table, `admin_actions` (admin, action, subject, reason, before and after per changed field, IP, time), written by `App\Support\AdminLog` in the same transaction as the change; the app never edits or deletes a row. Sign-ins and failed sign-ins are logged too.
+- Mark paid by hand goes through the same `PaymentRecorder` as Razorpay (same publishing, link and picture), with a required reason (10+ characters) and an optional reference. `orders.paid_by_admin_id` records the admin; `orders.razorpay_order_id` is nullable for orders made by hand. A draft with no order gets one at the template's price.
+- The invitation edit screen reuses the builder's shared form (`TemplateFields`, `FormSection`, and now `PhonePreview`), saves with an explicit Save that lists every change, and logs each changed field. Admins can edit in any status; customers stop at the event date. Disabling, enabling and removing a photo need a reason.
+- Searching invitations covers the title (English names), link and customer; Tamil names aren't searchable yet, because `data` stores them escaped.
 
 **First message to give Claude in the IDE**
 

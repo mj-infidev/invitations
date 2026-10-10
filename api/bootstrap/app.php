@@ -18,6 +18,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // Requests from the Vue apps (SANCTUM_STATEFUL_DOMAINS) get the session cookie
         // and CSRF check: customers and admins sign in with cookies, not tokens.
         $middleware->statefulApi();
+        // ... with the admin session kept at SameSite=Strict.
+        $middleware->api(replace: [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class => \App\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        ]);
+
+        // The admin panel's own session cookie, set before the session starts.
+        $middleware->prepend(\App\Http\Middleware\UseAdminSession::class);
 
         $middleware->trustProxies(at: '*');
 

@@ -11,7 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id', 'invitation_id', 'amount_paise', 'currency', 'status',
-        'razorpay_order_id', 'razorpay_payment_id', 'paid_at',
+        'razorpay_order_id', 'razorpay_payment_id', 'paid_at', 'paid_by_admin_id',
     ];
 
     protected function casts(): array
@@ -20,6 +20,12 @@ class Order extends Model
             'amount_paise' => 'integer',
             'paid_at'      => 'datetime',
         ];
+    }
+
+    /** Null for a Razorpay payment; the admin who marked it paid by hand otherwise. */
+    public function paidBy(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'paid_by_admin_id');
     }
 
     public function user(): BelongsTo
