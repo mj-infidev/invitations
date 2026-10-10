@@ -398,12 +398,13 @@ Nine steps, one per coding session. The animated page comes second, before login
 
 **Notes for later steps**
 
-- **Step 4:** invitations use soft delete, so the database cascade on `invitation_media` never fires when a customer deletes a draft. The delete code must remove the media rows and their files from disk itself.
-- **Step 4:** a new draft gets `data.avatar` = `Avatar::defaults()`, and saving the form must not drop it. Validate `venue.map_url` as an http(s) link; the page already refuses anything else.
 - **Step 5:** until the preview picture exists, the page has no `og:image` tag.
 - **Step 6:** decide whether the admin app gets its own session cookie, separate from customers. Today both apps share one cookie, with a separate sign-in for each guard inside it.
 - **Step 8:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
 - **Before launch:** Google blocks its sign-in inside in-app browsers (Instagram, Facebook), where many links opened from those apps land. The sign-in page needs an "open in your browser" hint, and this is a reason to add phone OTP later.
+- **Step 5:** at publish, replace the draft's placeholder slug (`draft-…`) with the name-based one (`priya-karthik-x7k2`); it never changes after that. Pay is enabled only when the "still needed" list is empty.
+- **Before launch:** the live server needs PHP's **GD extension** (photos are resized and re-saved with it; locally it was switched on in `C:
+mpp\php\php.ini`, with the original kept as `php.ini.backup`), a `memory_limit` of at least 256M for large phone photos, and `php artisan storage:link`.
 - **Before launch:** the Google OAuth client needs the production redirect URI (`https://<domain>/api/auth/google/callback`), and the consent screen must be published out of Testing.
 
 **Settled in Step 2**
@@ -428,6 +429,17 @@ Nine steps, one per coding session. The animated page comes second, before login
 - An account is found by Google id, then by email only when Google has verified it; an unverified email is never stored.
 - The two Vue apps' addresses are in Sanctum's stateful list (`config/sanctum.php`, from `FRONTEND_CLIENT_URL` and `FRONTEND_ADMIN_URL`).
 - Sign-in cannot be tested from a phone on the local network: Google refuses redirect addresses on a private IP.
+
+**Settled in Step 4**
+
+- The builder saves the whole form 0.8 s after the customer stops typing, one save at a time. Drafts save with gaps; the server answers with the "still needed" list (required fields for every language the invitation shows).
+- Saving keeps only the template's fields plus `avatar`, and fills `title` and `event_date`. Map links must be http(s).
+- A new draft gets a random placeholder slug; the name-based link is set at publish (Step 5).
+- Photos: JPEG, PNG or WebP by content, up to 5 MB, within `max_photos` (checked under a row lock). Each is re-saved as WebP, quality 80, at most 1600 px, turned upright, with metadata stripped, under `storage/app/public/invitations/{id}/`.
+- Deleting a draft removes its media rows and files in code, then soft-deletes it. Only drafts can be deleted; a published invitation can be edited until its event date.
+- Preview: the real page with the preview token in a 390×844 frame. Desktop reloads it 3 s after the last save; phones load it when the Preview tab opens. It keeps its scroll position across reloads, and only our own sites may frame an invitation (`frame-ancestors`).
+- Phone form: collapsible sections, one open at a time, with a tick on each section that has nothing required missing. Desktop shows every section open.
+- The form renderer (`shared/components/TemplateFields.vue`, `FormSection.vue`) is shared, for the admin edit screen in Step 6.
 
 **First message to give Claude in the IDE**
 

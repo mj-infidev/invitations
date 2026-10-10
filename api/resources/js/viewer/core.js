@@ -12,6 +12,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { startCountdown } from './countdown'
 import { setupMusic } from './music'
 import { setupLanguageSwitch } from './language'
+import { rememberPreviewScroll } from './preview-scroll'
 import { loadLotties } from './lottie'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -83,6 +84,10 @@ export function startViewer({ scenes, lotties }) {
 
     return () => document.documentElement.classList.remove('motion')
   })
+
+  // After the scenes above: their pins set the page length the position refers to.
+  ScrollTrigger.refresh()
+  rememberPreviewScroll()
 
   mm.add('(prefers-reduced-motion: reduce)', () => {
     sections.forEach((section) => {

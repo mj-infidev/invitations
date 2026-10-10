@@ -33,7 +33,7 @@ let csrfReady = null
  * Sets the XSRF-TOKEN cookie. Fetched once per page load, lazily, before the
  * first write — a browsing-only visit never pays for it.
  */
-function ensureCsrfCookie() {
+export function ensureCsrfCookie() {
   if (readCookie('XSRF-TOKEN')) return Promise.resolve()
 
   csrfReady ||= fetch(`${API_BASE}/sanctum/csrf-cookie`, { credentials: 'include' })
@@ -77,4 +77,42 @@ export async function api(path, { method = 'GET', query, body, signal } = {}) {
   if (!res.ok) throw new ApiError(res.status, data)
 
   return data
+}
+
+/**
+ * Uploads a file as multipart form data, reporting progress (0–1) as it goes:
+ * fetch can't report upload progress, so this one uses XMLHttpRequest. Same
+ * cookie and CSRF rules as api().
+ *
+ * @param {string} path  e.g. '/api/invitations/3/media'
+ * @param {FormData} form
+ * @param {(fraction: number) => void} [onProgress]
+ */
+export async function upload(path, form, onProgress = () => {}) {
+  await ensureCsrfCookie()
+
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', API_BASE + path)
+    xhr.withCredentials = true
+    xhr.setRequestHeader('Accept', 'application/json')
+    const token = readCookie('XSRF-TOKEN')
+    if (token) xhr.setRequestHeader('X-XSRF-TOKEN', token)
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) onProgress(event.loaded / event.total)
+    }
+    xhr.onload = () => {
+      let data = null
+      try {
+        data = JSON.parse(xhr.responseText)
+      } catch {
+        // Not JSON: leave data null; the status says what happened.
+      }
+      if (xhr.status >= 200 && xhr.status < 300) resolve(data)
+      else reject(new ApiError(xhr.status, data))
+    }
+    xhr.onerror = () => reject(new ApiError(0, { message: "Couldn't reach the server. Check your connection and try again." }))
+    xhr.send(form)
+  })
 }

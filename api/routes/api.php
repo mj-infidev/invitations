@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\InvitationController;
+use App\Http\Controllers\Api\InvitationMediaController;
+use App\Http\Controllers\Api\TemplateController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,8 +12,20 @@ use Illuminate\Support\Facades\Route;
  * browser routes are in routes/web.php. See PLAN.md > API routes.
  */
 
+Route::get('/templates', [TemplateController::class, 'index']);
+Route::get('/templates/{slug}', [TemplateController::class, 'show']);
+
 Route::get('/me', [AuthController::class, 'me']);
 
 Route::middleware('auth:web')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    Route::get('/invitations', [InvitationController::class, 'index']);
+    Route::post('/invitations', [InvitationController::class, 'store'])->middleware('throttle:create-invitation');
+    Route::get('/invitations/{invitation}', [InvitationController::class, 'show']);
+    Route::put('/invitations/{invitation}', [InvitationController::class, 'update'])->middleware('throttle:autosave');
+    Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy']);
+
+    Route::post('/invitations/{invitation}/media', [InvitationMediaController::class, 'store'])->middleware('throttle:uploads');
+    Route::delete('/invitations/{invitation}/media/{media}', [InvitationMediaController::class, 'destroy']);
 });

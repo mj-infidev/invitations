@@ -5,6 +5,10 @@ return [
     // The customer site (client/). Google sign-in returns customers here.
     'client_url' => env('FRONTEND_CLIENT_URL', 'http://localhost:5173'),
 
+    // The admin panel (admin/). With the client, the only sites that may show an
+    // invitation in a frame.
+    'admin_url' => env('FRONTEND_ADMIN_URL', 'http://localhost:5174'),
+
     /*
     | The live demo on the landing page. Its dates are moved at every page load
     | so the muhurtham is always about `demo_days_ahead` days away and the

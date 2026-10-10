@@ -29,7 +29,7 @@ class InvitationPageController extends Controller
         abort_if($invitation->status === 'draft' && ! $hasPreviewToken, 404);
 
         if (in_array($invitation->status, ['expired', 'disabled'], true) || $invitation->expires_at?->isPast()) {
-            return $this->noindex(response()->view('invitations.ended', [
+            return $this->pageHeaders(response()->view('invitations.ended', [
                 'lang' => $invitation->language === 'en' ? 'en' : 'ta',
                 'languages' => $invitation->language === 'both' ? ['ta', 'en'] : [$invitation->language],
             ], 410));
@@ -48,16 +48,28 @@ class InvitationPageController extends Controller
 
         $response = response()->view($view, ['page' => $page]);
 
-        // Drafts change on every save and the demo's dates move daily: never cache them.
-        if ($page->watermark || $page->isDemo) {
+        // Drafts and the builder's preview change on every save, and the demo's
+        // dates move daily: never cache them.
+        if ($hasPreviewToken || $page->watermark || $page->isDemo) {
             $response->header('Cache-Control', 'no-store');
         }
 
-        return $this->noindex($response);
+        return $this->pageHeaders($response);
     }
 
-    private function noindex(Response $response): Response
+    /**
+     * Kept out of search engines, and shown in a frame only by our own sites:
+     * the builder's preview (client) and, later, the admin panel.
+     */
+    private function pageHeaders(Response $response): Response
     {
-        return $response->header('X-Robots-Tag', 'noindex');
+        $frameAncestors = collect([config('invitations.client_url'), config('invitations.admin_url')])
+            ->filter()
+            ->map(fn (string $url) => rtrim($url, '/'))
+            ->implode(' ');
+
+        return $response
+            ->header('X-Robots-Tag', 'noindex')
+            ->header('Content-Security-Policy', "frame-ancestors 'self' {$frameAncestors}");
     }
 }
