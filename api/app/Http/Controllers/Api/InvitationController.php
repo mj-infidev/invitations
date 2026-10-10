@@ -7,6 +7,7 @@ use App\Http\Resources\InvitationResource;
 use App\Models\Invitation;
 use App\Models\Template;
 use App\Support\Avatar;
+use App\Support\Languages;
 use App\Support\PaymentRecorder;
 use App\Support\TemplateForm;
 use Illuminate\Http\JsonResponse;
@@ -63,7 +64,7 @@ class InvitationController extends Controller
             'template_id' => $template->id,
             'slug' => self::draftSlug(),
             'status' => 'draft',
-            'language' => 'both',
+            'language' => Languages::forNewDraft(),
             'data' => $form->clean([], ['avatar' => Avatar::defaults()]),
             'preview_token' => Str::random(40),
         ]);

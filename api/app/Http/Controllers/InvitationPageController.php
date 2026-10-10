@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invitation;
 use App\Support\InvitationPage;
+use App\Support\Languages;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -29,9 +30,11 @@ class InvitationPageController extends Controller
         abort_if($invitation->status === 'draft' && ! $hasPreviewToken, 404);
 
         if (in_array($invitation->status, ['expired', 'disabled'], true) || $invitation->expires_at?->isPast()) {
+            $language = Languages::effective($invitation->language);
+
             return $this->pageHeaders(response()->view('invitations.ended', [
-                'lang' => $invitation->language === 'en' ? 'en' : 'ta',
-                'languages' => $invitation->language === 'both' ? ['ta', 'en'] : [$invitation->language],
+                'lang' => $language === 'en' ? 'en' : 'ta',
+                'languages' => $language === 'both' ? ['ta', 'en'] : [$language],
             ], 410));
         }
 

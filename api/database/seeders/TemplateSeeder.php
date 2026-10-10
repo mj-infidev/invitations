@@ -68,7 +68,8 @@ class TemplateSeeder extends Seeder
                         ['key' => 'muhurtham.time', 'type' => 'time', 'required' => true,
                             'label' => ['en' => 'Time', 'ta' => 'நேரம்']],
                         // Typed by the family, never calculated (PLAN.md > Tamil language support).
-                        ['key' => 'muhurtham.tamil_date', 'type' => 'text', 'required' => false, 'max' => 40,
+                        // lang: shown only when Tamil is one of the languages (App\Support\Languages).
+                        ['key' => 'muhurtham.tamil_date', 'type' => 'text', 'lang' => 'ta', 'required' => false, 'max' => 40,
                             'label' => ['en' => 'Tamil calendar date', 'ta' => 'தமிழ் தேதி'],
                             'help'  => ['en' => 'For example ஐப்பசி 26', 'ta' => 'உதாரணம்: ஐப்பசி 26']],
                     ],

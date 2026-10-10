@@ -47,7 +47,7 @@ const linkInput = ref(null)
 
 // The message guests receive with the link, in the invitation's language.
 const whatsAppUrl = computed(() => {
-  const message = invitation.value.language === 'ta'
+  const message = invitation.value.tamil_enabled && invitation.value.language === 'ta'
     ? 'எங்கள் திருமணத்திற்கு உங்களை அன்புடன் அழைக்கிறோம் 💐'
     : "You're warmly invited to our wedding 💐"
   return `https://wa.me/?text=${encodeURIComponent(`${message}\n${invitation.value.public_url}`)}`

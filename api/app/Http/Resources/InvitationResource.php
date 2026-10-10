@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\Invitation;
+use App\Support\Languages;
 use App\Support\TemplateForm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,6 +38,8 @@ class InvitationResource extends JsonResource
             'id' => $this->id,
             'status' => $this->status,
             'language' => $this->language,
+            // Off: the builder offers no language choice and shows English only.
+            'tamil_enabled' => Languages::tamilEnabled(),
             'title' => $this->title,
             'event_date' => $this->event_date?->toDateString(),
             'updated_at' => $this->updated_at?->toIso8601String(),

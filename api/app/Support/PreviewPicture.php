@@ -66,7 +66,7 @@ class PreviewPicture
     public static function lines(Invitation $invitation): array
     {
         $page = new InvitationPage($invitation->loadMissing(['template', 'media']), watermark: false);
-        $english = $invitation->language !== 'ta';
+        $english = Languages::effective($invitation->language) !== 'ta';
         $bride = $page->get('bride.name.en');
         $groom = $page->get('groom.name.en');
         $date = $page->get('muhurtham.date');

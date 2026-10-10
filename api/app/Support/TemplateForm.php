@@ -146,6 +146,7 @@ class TemplateForm
      */
     public function missing(array $data, string $language): array
     {
+        $language = Languages::effective($language);
         $languages = $language === 'both' ? ['ta', 'en'] : [$language];
         $missing = [];
 
@@ -190,6 +191,7 @@ class TemplateForm
      */
     public static function derived(array $data, string $language): array
     {
+        $language = Languages::effective($language);
         $lang = $language === 'ta' ? 'ta' : 'en';
         $bride = data_get($data, "bride.name.{$lang}");
         $groom = data_get($data, "groom.name.{$lang}");

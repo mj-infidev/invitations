@@ -7,6 +7,7 @@ use App\Models\Invitation;
 use App\Models\Order;
 use App\Models\Template;
 use App\Models\User;
+use App\Support\Languages;
 use App\Support\TemplateForm;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -37,6 +38,7 @@ class AdminViews
 
         return self::invitationRow($invitation) + [
             'language' => $invitation->language,
+            'tamil_enabled' => Languages::tamilEnabled(),
             'data' => $invitation->data,
             'published_at' => $invitation->published_at?->toIso8601String(),
             'template_slug' => $invitation->template->slug,

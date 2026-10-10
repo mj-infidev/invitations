@@ -26,7 +26,7 @@
 
       <div class="body">
         <form class="stack" @submit.prevent="askToSave">
-          <FormSection id="section-language" title="Language guests see">
+          <FormSection v-if="invitation.tamil_enabled" id="section-language" title="Language guests see">
             <div class="choices" role="radiogroup" aria-label="Language guests see">
               <label v-for="option in LANGUAGE_OPTIONS" :key="option.value" class="choice">
                 <input v-model="form.language" type="radio" name="language" :value="option.value" />
@@ -189,7 +189,10 @@ const markingOrder = ref(null)
 const removing = ref(null)
 const copied = ref(false)
 
-const languages = computed(() => (form.language === 'both' ? ['ta', 'en'] : [form.language]))
+const languages = computed(() => {
+  if (!invitation.value?.tamil_enabled) return ['en'] // Tamil off (TAMIL_ENABLED)
+  return form.language === 'both' ? ['ta', 'en'] : [form.language]
+})
 const missingGroups = computed(() => new Set((invitation.value?.missing ?? []).map((item) => item.group)))
 
 // ── What changed (same idea as the server's log: one line per field) ──

@@ -24,7 +24,7 @@
             <div class="muhurtham__line muhurtham__time">
                 <x-bi as="p" :text="$page->time($page->get('muhurtham.time'))" />
             </div>
-            @if (filled($page->get('muhurtham.tamil_date')))
+            @if (in_array('ta', $page->languages, true) && filled($page->get('muhurtham.tamil_date')))
                 <p class="muhurtham__line muhurtham__tamil" lang="ta">{{ $page->get('muhurtham.tamil_date') }}</p>
             @endif
 

@@ -9,7 +9,7 @@
     Repeaters render their items with this same component.
   -->
   <div class="fields">
-    <template v-for="field in fields" :key="field.key">
+    <template v-for="field in shownFields" :key="field.key">
       <!-- Repeater: a card per item, with add and remove -->
       <fieldset v-if="field.type === 'repeater'" class="repeater">
         <!-- The section card already shows the group title; this names the list for screen readers. -->
@@ -86,6 +86,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { emptyItem, getPath, inputId } from '../lib/templateData'
 
 const props = defineProps({
@@ -105,6 +106,9 @@ const emit = defineEmits(['update'])
 
 const LANGUAGE_NAMES = { ta: 'தமிழ்', en: 'English' }
 const INPUT_TYPES = { date: 'date', time: 'time', url: 'url' }
+
+// A field marked with a language (the Tamil calendar date) only when that language is shown.
+const shownFields = computed(() => props.fields.filter((field) => !field.lang || props.languages.includes(field.lang)))
 
 const pathOf = (field) => (props.base ? `${props.base}.${field.key}` : field.key)
 const errorFor = (path) => props.errors[path] ?? null

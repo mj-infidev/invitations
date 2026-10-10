@@ -31,7 +31,8 @@ class InvitationPage
         public readonly bool $watermark,
     ) {
         $this->isDemo = $invitation->slug === config('invitations.demo_slug');
-        $this->languages = match ($invitation->language) {
+        // English only while Tamil is off (App\Support\Languages).
+        $this->languages = match (Languages::effective($invitation->language)) {
             'ta' => ['ta'],
             'en' => ['en'],
             default => ['ta', 'en'],
@@ -48,7 +49,7 @@ class InvitationPage
      */
     public function lang(): string
     {
-        return $this->invitation->language === 'ta' ? 'ta' : 'en';
+        return $this->languages === ['ta'] ? 'ta' : 'en';
     }
 
     /** Whether guests get the தமிழ் / English switch. */
@@ -146,7 +147,7 @@ class InvitationPage
     /** Language of the WhatsApp card: English unless the invitation is Tamil only. */
     private function previewLang(): string
     {
-        return $this->invitation->language === 'ta' ? 'ta' : 'en';
+        return $this->languages === ['ta'] ? 'ta' : 'en';
     }
 
     /** "Priya weds Karthik": the stored title, or built from the names for a fresh draft. */

@@ -2,6 +2,10 @@
 
 return [
 
+    // Tamil on invitations, the builder and the page's language switch. Off for now:
+    // everything is English-only, the Tamil code and data kept (App\Support\Languages).
+    'tamil_enabled' => (bool) env('TAMIL_ENABLED', false),
+
     // The customer site (client/). Google sign-in returns customers here.
     'client_url' => env('FRONTEND_CLIENT_URL', 'http://localhost:5173'),
 
