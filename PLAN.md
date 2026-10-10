@@ -404,6 +404,7 @@ Nine steps, one per coding session. The animated page comes second, before login
 **Notes for later steps**
 
 - **Step 8:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
+- **Step 8:** admin search does not find Tamil names, because `invitations.data` stores Tamil escaped (`ப…`). Store JSON with Tamil unescaped (`JSON_UNESCAPED_UNICODE`) and fix the existing rows with a migration that re-saves them.
 - **Before launch:** Google blocks its sign-in inside in-app browsers (Instagram, Facebook), where many links opened from those apps land. The sign-in page needs an "open in your browser" hint, and this is a reason to add phone OTP later.
 - **Step 7 (design pass):** consider drawing the WhatsApp picture in the customer's browser at publish, so Tamil names can appear on it. The server draws it with GD, which can't shape Tamil (vowel signs land in the wrong place), so today the picture carries the English names, and a Tamil-only invitation's picture shows a large உ and the date instead.
 - **Before launch:** the live server needs PHP's **GD extension** (photos and the WhatsApp picture are drawn with it; locally it was switched on in `C:\xampp\php\php.ini`, with the original kept as `php.ini.backup`), a `memory_limit` of at least 256M for large phone photos, and `php artisan storage:link`.
