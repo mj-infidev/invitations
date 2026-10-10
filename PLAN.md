@@ -382,7 +382,7 @@ We hold families' names, photos, and event addresses, so these rules apply from 
 
 ## Build order
 
-Eight steps, one per coding session. The animated page comes second, before login and payments, because it is the product; if it does not look good, nothing else matters.
+Nine steps, one per coding session. The animated page comes second, before login and payments, because it is the product; if it does not look good, nothing else matters.
 
 | Step | What gets built | Done when |
 | --- | --- | --- |
@@ -392,15 +392,16 @@ Eight steps, one per coding session. The animated page comes second, before logi
 | 4 | Builder in `client/`: template list, details form, photo upload, preview iframe, my invitations | A customer can create a draft and see it in preview with the watermark |
 | 5 | Razorpay in test mode: checkout, verify, webhook, publish, preview picture | A test payment publishes the invitation and the WhatsApp card shows names and picture |
 | 6 | Admin panel: the six screens | We can find an order, fix a spelling, and mark an order paid |
-| 7 | Tamil: site translations, fonts, Tamil dates, long-name tests | The whole flow works in Tamil from sign-in to shared link |
-| 8 | Real artwork, speed tuning, live Razorpay keys, launch | First real customer |
+| 7 | Design pass: real layered artwork for all seven scenes, text size and hierarchy, a proper desktop layout, the "has ended" page showing one language | Every scene has its final art and reads well on a budget phone and on a desktop |
+| 8 | Tamil: site translations, fonts, Tamil dates, long-name tests | The whole flow works in Tamil from sign-in to shared link |
+| 9 | Speed tuning, live Razorpay keys, launch | First real customer |
 
 **Notes for later steps**
 
 - **Step 4:** invitations use soft delete, so the database cascade on `invitation_media` never fires when a customer deletes a draft. The delete code must remove the media rows and their files from disk itself.
 - **Step 4:** a new draft gets `data.avatar` = `Avatar::defaults()`, and saving the form must not drop it. Validate `venue.map_url` as an http(s) link; the page already refuses anything else.
 - **Step 5:** until the preview picture exists, the page has no `og:image` tag.
-- **Step 7:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
+- **Step 8:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
 
 **Settled in Step 2**
 
@@ -414,7 +415,7 @@ Eight steps, one per coding session. The animated page comes second, before logi
 - An expired or disabled invitation answers 410 with the "has ended" page.
 - A root `.htaccess` blocks Apache from serving the project folder, as in nancofills; XAMPP was serving `api/.env` and `.git` to the local network.
 - Tamil and English never share a screen. A "both" invitation shows one language at a time, with a small தமிழ் / English switch, opening in English for now. A language left blank is not filled from the other, so the Step 4 form must require every language the invitation shows.
-- In Tamil view every character, digits and punctuation included, is drawn by a Tamil font. Fonts are self-hosted: Tiro Tamil (Tamil names and headings, kept until the Step 7 review), Anek Tamil (Tamil body), Great Vibes (English names), Cormorant Garamond (English headings and body, set a size up).
+- In Tamil view every character, digits and punctuation included, is drawn by a Tamil font. Fonts are self-hosted: Tiro Tamil (Tamil names and headings, kept until the Step 8 review), Anek Tamil (Tamil body), Great Vibes (English names), Cormorant Garamond (English headings and body, set a size up).
 
 **First message to give Claude in the IDE**
 
