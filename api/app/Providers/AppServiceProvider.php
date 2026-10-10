@@ -39,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
         // Photos: 30 a minute, 200 a day.
         RateLimiter::for('uploads', fn (Request $request) => $customerAndIp($request, 'uploads', Limit::perMinute(30), Limit::perDay(200)));
 
+        // Opening Checkout and confirming a payment: 20 a minute.
+        RateLimiter::for('checkout', fn (Request $request) => $customerAndIp($request, 'checkout', Limit::perMinute(20)));
+
         // Autosave sends at most one save every 0.8 s while typing.
         RateLimiter::for('autosave', fn (Request $request) => $customerAndIp($request, 'autosave', Limit::perMinute(120)));
     }

@@ -44,7 +44,7 @@ invitations/
 | Small looping animations | Lottie (`lottie-web`) |
 | Google sign-in | Laravel Socialite |
 | Session cookies for the Vue apps | Laravel Sanctum (SPA mode) |
-| Payments | Razorpay PHP SDK (`razorpay/razorpay`) |
+| Payments | Razorpay REST API through Laravel's `Http` client, no SDK (as in nancofills) |
 | Image resize and preview image | Intervention Image |
 | File storage | Laravel filesystem, public disk to start |
 | Translations | `vue-i18n` in the Vue apps, Laravel lang files in the API |
@@ -398,13 +398,12 @@ Nine steps, one per coding session. The animated page comes second, before login
 
 **Notes for later steps**
 
-- **Step 5:** until the preview picture exists, the page has no `og:image` tag.
 - **Step 6:** decide whether the admin app gets its own session cookie, separate from customers. Today both apps share one cookie, with a separate sign-in for each guard inside it.
 - **Step 8:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
 - **Before launch:** Google blocks its sign-in inside in-app browsers (Instagram, Facebook), where many links opened from those apps land. The sign-in page needs an "open in your browser" hint, and this is a reason to add phone OTP later.
-- **Step 5:** at publish, replace the draft's placeholder slug (`draft-…`) with the name-based one (`priya-karthik-x7k2`); it never changes after that. Pay is enabled only when the "still needed" list is empty.
-- **Before launch:** the live server needs PHP's **GD extension** (photos are resized and re-saved with it; locally it was switched on in `C:
-mpp\php\php.ini`, with the original kept as `php.ini.backup`), a `memory_limit` of at least 256M for large phone photos, and `php artisan storage:link`.
+- **Step 7 (design pass):** consider drawing the WhatsApp picture in the customer's browser at publish, so Tamil names can appear on it. The server draws it with GD, which can't shape Tamil (vowel signs land in the wrong place), so today the picture carries the English names, and a Tamil-only invitation's picture shows a large உ and the date instead.
+- **Before launch:** the live server needs PHP's **GD extension** (photos and the WhatsApp picture are drawn with it; locally it was switched on in `C:\xampp\php\php.ini`, with the original kept as `php.ini.backup`), a `memory_limit` of at least 256M for large phone photos, and `php artisan storage:link`.
+- **Before launch:** live Razorpay keys, and a webhook in the live dashboard: `https://<domain>/api/webhooks/razorpay`, events `payment.captured` and `payment.failed`, with the same secret as `RAZORPAY_WEBHOOK_SECRET`. How long an invitation stays live after its event (`expires_at`) is still open; it is left empty at publish.
 - **Before launch:** the Google OAuth client needs the production redirect URI (`https://<domain>/api/auth/google/callback`), and the consent screen must be published out of Testing.
 
 **Settled in Step 2**
@@ -440,6 +439,16 @@ mpp\php\php.ini`, with the original kept as `php.ini.backup`), a `memory_limit` 
 - Preview: the real page with the preview token in a 390×844 frame. Desktop reloads it 3 s after the last save; phones load it when the Preview tab opens. It keeps its scroll position across reloads, and only our own sites may frame an invitation (`frame-ancestors`).
 - Phone form: collapsible sections, one open at a time, with a tick on each section that has nothing required missing. Desktop shows every section open.
 - The form renderer (`shared/components/TemplateFields.vue`, `FormSection.vue`) is shared, for the admin edit screen in Step 6.
+
+**Settled in Step 5**
+
+- Razorpay through its REST API with Laravel's `Http` client (`App\Support\Razorpay`), not the SDK. Capture is set on each order (`payment_capture: 1`), not by the account setting: the test account is shared.
+- Checkout creates the Razorpay order at the template's price and an `orders` row (`created`). Verify (from the browser: HMAC of `order_id|payment_id` with the key secret) and the webhook (HMAC of the raw body with the webhook secret) both go through `PaymentRecorder`, under a lock on the order: whichever arrives first marks it paid and publishes; the second changes nothing.
+- Every webhook is logged in `payment_events`; a repeated event id is ignored. Unknown orders (the shared test account) and unhandled events answer 200. A captured amount that doesn't match the order is logged and not published. `payment.failed` marks an unpaid order `failed`, which a later success can still turn `paid`.
+- Publishing: a name-based link (English names, else `wedding-` for a Tamil-only invitation) plus 4 random characters, fixed for good; status `published`, no watermark. The WhatsApp picture (1200 × 630 JPEG, about 55 KB) is drawn after the payment commits, and redrawn under a new file name only when the names or date change.
+- Locally, Razorpay can't reach the webhook: `php artisan payments:replay-webhook {razorpay_order_id}` fetches the order's real test payment, signs the event with `RAZORPAY_WEBHOOK_SECRET` and posts it to our webhook.
+- After paying: a Share page with the link, Copy, and Share on WhatsApp (a short message in the invitation's language). A cancelled or failed payment leaves the draft as it was, with a message; if the verify call fails, the builder waits up to a minute for the webhook before saying so.
+- Razorpay's Checkout asks for a mobile number before paying (we don't collect one).
 
 **First message to give Claude in the IDE**
 

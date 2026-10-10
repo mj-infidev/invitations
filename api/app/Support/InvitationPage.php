@@ -172,15 +172,23 @@ class InvitationPage
             $parts[] = Carbon::parse($date)->locale($lang)->isoFormat('D MMMM YYYY');
         }
 
-        $address = $this->get("venue.address.{$lang}") ?: $this->get('venue.address.ta') ?: $this->get('venue.address.en');
-        $venue = $this->get("venue.name.{$lang}") ?: $this->get('venue.name.ta') ?: $this->get('venue.name.en');
-        if ($address) {
-            $parts[] = trim(collect(preg_split('/[,\n]/', $address))->filter(fn ($part) => trim($part) !== '')->last());
-        } elseif ($venue) {
-            $parts[] = $venue;
+        if ($town = $this->town($lang) ?? $this->town($lang === 'ta' ? 'en' : 'ta')) {
+            $parts[] = $town;
         }
 
         return implode(' · ', $parts);
+    }
+
+    /**
+     * Where, in a word or two: the last part of the venue address in this
+     * language ("Madurai"), else the venue's name. Null if neither was typed.
+     */
+    public function town(string $lang): ?string
+    {
+        $address = (string) $this->get("venue.address.{$lang}");
+        $last = collect(preg_split('/[,\n]/', $address))->map(fn ($part) => trim($part))->filter()->last();
+
+        return $last ?: ($this->get("venue.name.{$lang}") ?: null);
     }
 
     /**

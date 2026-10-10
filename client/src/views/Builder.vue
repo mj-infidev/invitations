@@ -69,7 +69,15 @@
           />
         </FormSection>
 
-        <section class="still-needed" aria-labelledby="still-needed-title">
+        <!-- Paid for: the link to share. Edits go live until the event date. -->
+        <section v-if="invitation.status === 'published'" class="live" aria-labelledby="live-title">
+          <h2 id="live-title">Your invitation is live</h2>
+          <p class="hint">Changes you make here update it straight away. The link stays the same.</p>
+          <p class="live__link"><a :href="invitation.public_url" target="_blank" rel="noopener">{{ invitation.public_url }}</a></p>
+          <router-link :to="{ name: 'share', params: { id: invitation.id } }" class="button">Share</router-link>
+        </section>
+
+        <section v-else class="still-needed" aria-labelledby="still-needed-title">
           <h2 id="still-needed-title">{{ invitation.missing.length ? 'Still needed before paying' : 'Everything needed is filled in' }}</h2>
           <ul v-if="invitation.missing.length">
             <li v-for="item in invitation.missing" :key="`${item.key}.${item.lang}`">
@@ -78,6 +86,19 @@
               </button>
             </li>
           </ul>
+
+          <div class="pay">
+            <button
+              type="button"
+              class="button"
+              :disabled="invitation.missing.length > 0 || payState === 'paying' || payState === 'confirming'"
+              @click="pay"
+            >
+              {{ payState === 'confirming' ? 'Confirming your payment…' : `Pay ${rupees(invitation.template.price_paise)}` }}
+            </button>
+            <p class="hint">Paying removes the watermark and gives you the link to share.</p>
+            <p v-if="payMessage" class="pay__message" :class="{ 'is-error': payState === 'error' }" role="status">{{ payMessage }}</p>
+          </div>
         </section>
       </form>
 
@@ -95,7 +116,7 @@
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
-import { onBeforeRouteLeave, useRoute } from 'vue-router'
+import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import FormSection from '@shared/components/FormSection.vue'
 import TemplateFields from '@shared/components/TemplateFields.vue'
 import { inputId, setPath } from '@shared/lib/templateData'
@@ -103,6 +124,7 @@ import PhonePreview from '../components/PhonePreview.vue'
 import PhotoManager from '../components/PhotoManager.vue'
 import { api } from '../lib/api'
 import { useAutosave } from '../composables/useAutosave'
+import { openCheckout } from '../composables/useRazorpay'
 import { PHONE, useMediaQuery } from '../composables/useMediaQuery'
 
 const LANGUAGE_NAMES = { ta: 'தமிழ்', en: 'English' }
@@ -115,6 +137,7 @@ const LANGUAGE_OPTIONS = [
 const PREVIEW_RELOAD_DELAY = 3000
 
 const route = useRoute()
+const router = useRouter()
 const isPhone = useMediaQuery(PHONE)
 
 const invitation = ref(null) // as the server last answered: status, missing, photos, preview link
@@ -191,6 +214,59 @@ function change(path, value) {
 
 function photosChanged(data) {
   serverAnswered(data)
+}
+
+// ── Paying ───────────────────────────────────────────────────────
+
+// '' | 'paying' (Checkout open) | 'confirming' (paid; waiting for the server) | 'cancelled' | 'error'
+const payState = ref('')
+const payMessage = ref('')
+const rupees = (paise) => `₹${(paise / 100).toLocaleString('en-IN')}`
+
+async function pay() {
+  payMessage.value = ''
+  payState.value = 'paying'
+  try {
+    // Pay for what the customer sees: anything still being typed is saved first.
+    if (!(await flush())) throw new Error('Please fix the highlighted fields first.')
+
+    const { data: checkout } = await api(`/api/invitations/${invitation.value.id}/checkout`, { method: 'POST' })
+    const result = await openCheckout(checkout)
+
+    if (result.status === 'paid') {
+      await confirmPayment(result.response)
+    } else if (result.status === 'failed') {
+      payState.value = 'error'
+      payMessage.value = `Payment didn't go through: ${result.reason} Nothing was charged. You can try again.`
+    } else {
+      payState.value = 'cancelled'
+      payMessage.value = "Payment cancelled. You can try again whenever you're ready."
+    }
+  } catch (error) {
+    payState.value = 'error'
+    payMessage.value = error.message
+  }
+}
+
+/**
+ * Paid in Checkout: the server confirms it from Razorpay's signed answer. If
+ * that call doesn't get through, Razorpay's webhook publishes the invitation
+ * anyway, so wait for that for about a minute before giving up.
+ */
+async function confirmPayment(response) {
+  payState.value = 'confirming'
+  try {
+    await api('/api/payments/verify', { method: 'POST', body: response })
+    return router.push({ name: 'share', params: { id: invitation.value.id } })
+  } catch {
+    for (let i = 0; i < 20; i++) {
+      await new Promise((resolve) => setTimeout(resolve, 3000))
+      const { data } = await api(`/api/invitations/${invitation.value.id}`).catch(() => ({ data: null }))
+      if (data?.status === 'published') return router.push({ name: 'share', params: { id: data.id } })
+    }
+  }
+  payState.value = 'error'
+  payMessage.value = "We're still confirming your payment. If money left your account, your invitation will go live shortly. Contact us if it doesn't."
 }
 
 // ── Preview ──────────────────────────────────────────────────────
@@ -357,7 +433,24 @@ onBeforeRouteLeave(async () => {
   background: var(--accent-soft);
 }
 
-.still-needed h2 { margin: 0 0 8px; font-size: 1rem; }
+.still-needed h2,
+.live h2 { margin: 0 0 8px; font-size: 1rem; }
+
+.pay { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; margin-top: 14px; }
+.pay__message { margin: 0; font-size: 0.9rem; }
+.pay__message.is-error { color: var(--danger); }
+
+.live {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #e9f5ee;
+}
+
+.live__link { margin: 0; overflow-wrap: anywhere; }
 .still-needed ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
 
 .link-button {

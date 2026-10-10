@@ -28,8 +28,9 @@
             <button type="button" class="button button--quiet" @click="confirming = null">Keep it</button>
           </div>
           <div v-else class="actions">
-            <router-link :to="{ name: 'builder', params: { id: item.id } }" class="button">Edit</router-link>
-            <a :href="item.preview_url" target="_blank" rel="noopener" class="button button--quiet">Preview</a>
+            <router-link v-if="item.public_url" :to="{ name: 'share', params: { id: item.id } }" class="button">Share</router-link>
+            <router-link :to="{ name: 'builder', params: { id: item.id } }" class="button" :class="{ 'button--quiet': item.public_url }">Edit</router-link>
+            <a :href="item.public_url || item.preview_url" target="_blank" rel="noopener" class="button button--quiet">{{ item.public_url ? 'Open' : 'Preview' }}</a>
             <button v-if="item.can_delete" type="button" class="link-button" @click="confirming = item.id">Delete</button>
           </div>
         </div>

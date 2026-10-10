@@ -26,6 +26,13 @@ const routes = [
     component: () => import('../views/Builder.vue'),
     meta: { requiresAuth: true, title: 'Edit invitation' },
   },
+  // After paying: the link, Copy, and Share on WhatsApp.
+  {
+    path: '/invitations/:id(\\d+)/share',
+    name: 'share',
+    component: () => import('../views/Share.vue'),
+    meta: { requiresAuth: true, title: 'Share your invitation' },
+  },
 ]
 
 const router = createRouter({

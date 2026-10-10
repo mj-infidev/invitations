@@ -7,6 +7,7 @@ use App\Http\Resources\InvitationResource;
 use App\Models\Invitation;
 use App\Models\Template;
 use App\Support\Avatar;
+use App\Support\PaymentRecorder;
 use App\Support\TemplateForm;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -39,6 +40,7 @@ class InvitationController extends Controller
             'template' => ['slug' => $invitation->template->slug, 'name' => $invitation->template->name],
             'cover_url' => ($photo = $invitation->media->first()) ? asset('storage/'.$photo->path) : null,
             'preview_url' => route('invitation.show', $invitation->slug).'?preview='.$invitation->preview_token,
+            'public_url' => $invitation->status === 'published' ? route('invitation.show', $invitation->slug) : null,
             'can_delete' => $invitation->status === 'draft',
         ])]);
     }
@@ -94,6 +96,11 @@ class InvitationController extends Controller
         $data = $form->clean($request->input('data', []), $invitation->data ?? []);
 
         $invitation->update(['language' => $language, 'data' => $data] + TemplateForm::derived($data, $language));
+
+        // Published: the WhatsApp picture follows the names and date (redrawn only if they changed).
+        if ($invitation->status === 'published') {
+            PaymentRecorder::refreshPicture($invitation);
+        }
 
         return InvitationResource::respond($invitation);
     }

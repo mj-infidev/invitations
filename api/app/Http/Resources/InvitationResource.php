@@ -45,6 +45,7 @@ class InvitationResource extends JsonResource
                 'slug' => $this->template->slug,
                 'name' => $this->template->name,
                 'max_photos' => $this->template->max_photos,
+                'price_paise' => $this->template->price_paise,
             ],
             'photos' => $this->media->where('type', 'photo')->values()->map(fn ($media) => [
                 'id' => $media->id,
@@ -53,6 +54,8 @@ class InvitationResource extends JsonResource
                 'height' => $media->height,
             ]),
             'preview_url' => route('invitation.show', $this->slug).'?preview='.$this->preview_token,
+            // The link to share, once paid for. A draft has none.
+            'public_url' => $this->status === 'published' ? route('invitation.show', $this->slug) : null,
             'missing' => $form->missing($this->data ?? [], $this->language),
             'can_delete' => $this->status === 'draft',
         ];
