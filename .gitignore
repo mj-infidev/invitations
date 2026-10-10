@@ -58,3 +58,6 @@ api/database/*.sqlite
 *.tar.gz
 Homestead.json
 Homestead.yaml
+
+# Source artwork (large PNGs). Only the WebP versions in client/src/assets belong in git.
+art/

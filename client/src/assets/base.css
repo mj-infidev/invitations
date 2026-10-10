@@ -93,6 +93,27 @@ h1 { font-size: 1.6rem; margin: 0 0 8px; line-height: 1.25; }
 
 .brand { font-weight: 700; color: var(--text); text-decoration: none; }
 
+/* Home page: over the hero photo, no background, light text. */
+.site-header--overlay {
+  position: absolute;
+  z-index: 10;
+  inset: 0 0 auto;
+  border-bottom: 0;
+  background: transparent;
+  padding: 18px clamp(20px, 5vw, 64px);
+}
+
+.site-header--overlay .brand {
+  color: #f6eee0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.site-header--overlay .site-header__nav a,
+.site-header--overlay .site-header__nav .link-button { color: #f6eee0; }
+
 .site-header__nav { display: flex; align-items: center; gap: 14px; font-size: 0.95rem; }
 .site-header__nav a { text-decoration: none; }
 .avatar { border-radius: 50%; }
