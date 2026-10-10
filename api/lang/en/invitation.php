@@ -1,0 +1,31 @@
+<?php
+
+// Words on the invitation page (/i/{slug}) itself. Names, venues and messages
+// come from the customer, never from here.
+return [
+    'wedding_invitation' => 'Wedding invitation',
+    'scroll_hint' => 'Scroll down',
+    'bride' => 'Bride',
+    'groom' => 'Groom',
+    'with_blessings' => 'With the blessings of our families',
+    'bride_parents' => "Bride's parents",
+    'groom_parents' => "Groom's parents",
+    'muhurtham' => 'Muhurtham',
+    'days' => 'Days',
+    'hours' => 'Hours',
+    'minutes' => 'Minutes',
+    'seconds' => 'Seconds',
+    'countdown_done' => 'The auspicious day is here',
+    'venue' => 'Venue',
+    'open_in_maps' => 'Open in Maps',
+    'other_events' => 'Other events',
+    'photos' => 'Our moments',
+    'photo' => 'Photo',
+    'welcome' => 'We warmly await your presence',
+    'made_with' => 'Made with :brand',
+    'music_play' => 'Play music',
+    'music_pause' => 'Pause music',
+    'preview' => 'Preview',
+    'ended_title' => 'This invitation has ended',
+    'ended_body' => 'Thank you for visiting.',
+];

@@ -1,0 +1,17 @@
+# Blocks web access to this folder, as in nancofills.
+#
+# The project sits inside XAMPP's htdocs, so without this Apache serves all of
+# it — api/.env, .git, config, both Vue source trees — to anyone who can reach
+# this computer. Local development uses `php artisan serve` and the Vite dev
+# servers, which this does not affect. How the live server is laid out is an
+# open decision (PLAN.md > Hosting).
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
+
+Options -Indexes

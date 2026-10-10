@@ -1,14 +1,17 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
-import tailwindcss from '@tailwindcss/vite';
+import { readdirSync } from 'node:fs';
+
+// One entry per invitation template; the Blade page loads the one its invitation uses.
+const templates = readdirSync('resources/js/viewer/templates')
+    .map((name) => `resources/js/viewer/templates/${name}/index.js`);
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: ['resources/css/app.css', 'resources/js/app.js'],
+            input: templates,
             refresh: true,
         }),
-        tailwindcss(),
     ],
     server: {
         watch: {

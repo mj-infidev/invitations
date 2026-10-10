@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Invitation;
 use App\Models\Template;
 use App\Models\User;
+use App\Support\Avatar;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -76,6 +77,8 @@ class DemoInvitationSeeder extends Seeder
                     'place' => ['ta' => 'அதே மண்டபம்', 'en' => 'Same venue'],
                 ],
             ],
+            // Reserved for the couple customizer; every invitation starts with the defaults.
+            'avatar' => Avatar::defaults(),
         ];
     }
 }

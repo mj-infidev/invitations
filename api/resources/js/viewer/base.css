@@ -1,0 +1,242 @@
+/*
+ * Shared by every invitation template: page reset, scene frame, bilingual
+ * text, buttons, watermark, music button. Designed for a phone held upright
+ * first; wider screens get more room, not a different layout.
+ *
+ * Elements that scenes animate never get a CSS transform: GSAP owns their
+ * transform, and a CSS one would be read once and then fight it on resize.
+ */
+
+:root {
+    --maroon: #5b0f1f;
+    --maroon-deep: #2e0711;
+    --red: #8c1d3a;
+    --gold: #e0a93b;
+    --gold-light: #f6d27a;
+    --cream: #fff6e3;
+    --ink: #3b1a10;
+
+    /* Tamil web fonts are hosted and loaded in Step 7; until then the phone's own. */
+    --font-tamil-serif: 'Noto Serif Tamil', 'Nirmala UI', 'Latha', serif;
+    --font-tamil-sans: 'Noto Sans Tamil', 'Nirmala UI', 'Latha', system-ui, sans-serif;
+    --font-serif: Georgia, 'Times New Roman', serif;
+    --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+    --gutter: max(20px, env(safe-area-inset-left));
+    color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    background: var(--maroon-deep);
+    color: var(--cream);
+}
+
+body {
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+}
+
+p, h1, h2, h3, figure { margin: 0; }
+
+/* Tamil runs longer and stacks vowel signs above and below: more line height. */
+:lang(ta) {
+    font-family: var(--font-tamil-sans);
+    line-height: 1.6;
+}
+
+svg { display: block; }
+
+/* ── Scenes ─────────────────────────────────────────────────── */
+
+.scene { position: relative; }
+
+.scene__stage {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: max(28px, env(safe-area-inset-top)) var(--gutter) max(28px, env(safe-area-inset-bottom));
+}
+
+/* Pinned and played by scroll: exactly one screen tall. */
+.motion .scene__stage {
+    height: 100vh;
+    height: 100svh;
+}
+
+.layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.scene__content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 34rem;
+    text-align: center;
+}
+
+/* ── Text in one or two languages (<x-bi>) ──────────────────── */
+
+.bi { display: block; }
+
+/* English under Tamil when both are shown. */
+.bi--second {
+    font-size: 0.7em;
+    opacity: 0.85;
+    margin-top: 0.1em;
+}
+
+.eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+}
+
+.eyebrow:lang(ta) {
+    letter-spacing: 0.04em;
+    font-size: 0.95rem;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 10px 22px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: var(--maroon-deep);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.button svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+.button:focus-visible,
+.music-toggle:focus-visible,
+.brand:focus-visible {
+    outline: 3px solid var(--gold-light);
+    outline-offset: 3px;
+}
+
+/* ── Scroll hint (first scene) ──────────────────────────────── */
+
+/* Only when scenes play by scroll; otherwise the first screen is already the finished scene. */
+.scroll-hint { display: none; }
+
+.motion .scroll-hint {
+    position: absolute;
+    z-index: 3;
+    left: 0;
+    right: 0;
+    bottom: max(14px, env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--gold-light);
+}
+
+.scroll-hint .bi--second { font-size: 0.75rem; }
+
+.scroll-hint__arrow {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    animation: hint-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes hint-bounce {
+    50% { transform: translateY(6px); }
+}
+
+/* ── Lottie boxes: the still drawing until the loop is playing ── */
+
+[data-lottie] > svg { width: 100%; height: 100%; }
+[data-lottie].is-playing > .lottie-still { display: none; }
+
+/* ── Watermark on unpaid drafts ─────────────────────────────── */
+
+.watermark {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.watermark__inner {
+    position: absolute;
+    inset: -50%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-around;
+    justify-content: space-around;
+    gap: 64px 48px;
+    transform: rotate(-28deg);
+}
+
+.watermark span {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: rgb(255 255 255 / 0.28);
+    text-shadow: 0 0 3px rgb(0 0 0 / 0.45);
+}
+
+/* ── Music button ───────────────────────────────────────────── */
+
+.music-toggle {
+    position: fixed;
+    z-index: 900;
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    background: rgb(46 7 17 / 0.8);
+    color: var(--gold-light);
+    cursor: pointer;
+}
+
+.music-toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+}
+
+.music-toggle:not(.is-playing) svg { opacity: 0.6; }
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-hint__arrow { animation: none; }
+}

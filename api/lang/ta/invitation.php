@@ -1,0 +1,31 @@
+<?php
+
+// Words on the invitation page (/i/{slug}) itself. Names, venues and messages
+// come from the customer, never from here.
+return [
+    'wedding_invitation' => 'திருமண அழைப்பிதழ்',
+    'scroll_hint' => 'கீழே நகர்த்தவும்',
+    'bride' => 'மணமகள்',
+    'groom' => 'மணமகன்',
+    'with_blessings' => 'இரு வீட்டாரின் நல்லாசியுடன்',
+    'bride_parents' => 'மணமகளின் பெற்றோர்',
+    'groom_parents' => 'மணமகனின் பெற்றோர்',
+    'muhurtham' => 'முகூர்த்தம்',
+    'days' => 'நாட்கள்',
+    'hours' => 'மணி',
+    'minutes' => 'நிமிடம்',
+    'seconds' => 'வினாடி',
+    'countdown_done' => 'சுப நாள் வந்துவிட்டது',
+    'venue' => 'மண்டபம்',
+    'open_in_maps' => 'வரைபடத்தில் திறக்க',
+    'other_events' => 'பிற நிகழ்வுகள்',
+    'photos' => 'எங்கள் தருணங்கள்',
+    'photo' => 'புகைப்படம்',
+    'welcome' => 'உங்கள் வருகையை அன்புடன் எதிர்பார்க்கிறோம்',
+    'made_with' => ':brand மூலம் உருவாக்கப்பட்டது',
+    'music_play' => 'இசையை இயக்கு',
+    'music_pause' => 'இசையை நிறுத்து',
+    'preview' => 'முன்னோட்டம்',
+    'ended_title' => 'இந்த அழைப்பிதழ் நிறைவடைந்தது',
+    'ended_body' => 'வருகைக்கு நன்றி.',
+];

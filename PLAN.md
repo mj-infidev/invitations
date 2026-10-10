@@ -222,6 +222,17 @@ Relations: a user has many invitations and orders; an invitation belongs to one 
 
 **Kept outside `data`:** photos are rows in `invitation_media` (at most `templates.max_photos`), and the language shown to guests is the `invitations.language` column.
 
+**Reserved key `avatar`:** the cartoon couple of the closing scene. It is not a form field: the builder must keep it untouched when saving, and a later couple customizer will edit it. Values are option names, never colours; `App\Support\Avatar` lists the options and maps them to colours, and anything missing or unknown falls back to the default.
+
+```json
+"avatar": {
+  "version": 1,
+  "bride": { "skin": "medium", "hair": "braid", "hair_color": "black", "outfit": "silk_saree", "outfit_color": "maroon", "jewellery": "temple_gold" },
+  "groom": { "skin": "medium", "hair": "short", "hair_color": "black", "outfit": "veshti_shirt", "outfit_color": "cream", "jewellery": "chain" },
+  "garland": "jasmine_rose"
+}
+```
+
 **Copied to columns on every save:** `title` = "{bride.name.en} weds {groom.name.en}" (Tamil names when English is empty), and `event_date` = `muhurtham.date`.
 
 **Tamil Hindu wedding `data` keys:** `bride.name`, `groom.name`, `bride.parents`, `groom.parents`, `message`, `muhurtham.date`, `muhurtham.time`, `muhurtham.tamil_date` (free text, not bilingual), `venue.name`, `venue.address`, `venue.map_url`, and `events[]` with `name`, `date`, `time`, `place`. The full schema is in `api/database/seeders/TemplateSeeder.php`, and filled-in demo data is in `DemoInvitationSeeder.php`.
@@ -387,6 +398,21 @@ Eight steps, one per coding session. The animated page comes second, before logi
 **Notes for later steps**
 
 - **Step 4:** invitations use soft delete, so the database cascade on `invitation_media` never fires when a customer deletes a draft. The delete code must remove the media rows and their files from disk itself.
+- **Step 4:** a new draft gets `data.avatar` = `Avatar::defaults()`, and saving the form must not drop it. Validate `venue.map_url` as an http(s) link; the page already refuses anything else.
+- **Step 5:** until the preview picture exists, the page has no `og:image` tag.
+- **Step 7:** the Tamil words on the invitation page (`api/lang/ta/invitation.php`) and the form labels need a native speaker's check.
+
+**Settled in Step 2**
+
+- The page is server-rendered Blade with every scene in its finished state; the viewer script only animates it. With reduced motion, or if the script fails, guests still see the whole invitation.
+- Scroll catch-up is `scrub: 0.5` rather than `true`: it smooths the steps between touch-scroll events.
+- The kolam draws by animating `stroke-dashoffset`, the one exception to "position, scale, rotation and opacity only". It is a small SVG, so the repaint is cheap.
+- The demo (`priya-karthik-demo`) moves its dates at every page load so the muhurtham is 45 days away, and drops its Tamil calendar date, which would no longer match.
+- A published invitation with no photos skips the photo scene; the demo and draft previews show empty frames instead.
+- Views are not counted for the owner's preview link or for WhatsApp and other apps fetching the link for a preview card.
+- The invitation page runs without a session, so guest visits write nothing and set no cookies.
+- An expired or disabled invitation answers 410 with the "has ended" page.
+- A root `.htaccess` blocks Apache from serving the project folder, as in nancofills; XAMPP was serving `api/.env` and `.git` to the local network.
 
 **First message to give Claude in the IDE**
 
