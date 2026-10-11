@@ -1,0 +1,110 @@
+/*
+ * The site's brand theme: every colour, font, radius and shadow the customer
+ * site (client/) uses. Components use only these variables; no colour or font
+ * name appears anywhere else in client/.
+ *
+ * Two schemes under the same names:
+ *  - light (:root): the builder, my invitations, share and sign-in pages
+ *  - dark ([data-theme="dark"]): the home page, and the site header over it
+ *
+ * The shared components in /shared read the same names, so the admin's theme
+ * (admin/src/assets/theme.css) gives them its own look.
+ *
+ * Invitation templates have their own themes (api/resources/js/viewer/templates/
+ * <slug>/theme.css). They are a separate page: nothing here reaches them, and
+ * nothing there reaches the site.
+ *
+ * Shades with transparency are mixed from the colours above them, so they
+ * follow when a colour changes.
+ */
+
+/* Self-hosted heading font. A browser downloads it only on pages that use it. */
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+
+:root {
+  /* ── Colours: light ── */
+  --color-bg: #faf7f5;
+  --color-surface: #ffffff;
+  --color-text: #2b2220;
+  --color-text-muted: #6b5b55;
+  --color-line: #ece5e2;
+  --color-line-strong: #cfc4bf;
+
+  --color-accent: #8c1d3a;
+  --color-accent-text: #ffffff;
+  --color-accent-soft: #f8ecef;
+
+  --color-success: #2f7d4b;
+  --color-success-text: #ffffff;
+  --color-success-soft: #e9f5ee;
+  --color-danger: #b42318;
+  --color-danger-soft: #fde8e8;
+
+  /* The WhatsApp share button, in WhatsApp's own green. */
+  --color-whatsapp: #1f8f4e;
+  --color-whatsapp-text: #ffffff;
+
+  /* Shadows, dialog backdrops, and the dark strip behind a photo's Remove button. */
+  --color-shadow: #000000;
+  --color-on-shadow: #ffffff;
+
+  /* ── Colours: the preview frame (shared/components/DevicePreview.vue) ──
+     The same on light and dark pages, so it is set once here. */
+  --color-preview-toolbar: #fbf6ee;
+  --color-preview-text: #2a1518;
+  --color-preview-active: #7a1c2c;
+  --color-preview-active-text: #ffffff;
+  --color-preview-device: #1c1416;
+  --color-preview-window: #f4efe8;
+  --color-preview-glow: #d4a84f;
+  --color-preview-fullscreen: #000000;
+  --color-window-close: #ff5f57;
+  --color-window-minimise: #febc2e;
+  --color-window-zoom: #28c840;
+
+  /* ── Fonts ── */
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Nirmala UI', 'Noto Sans Tamil', sans-serif;
+  --font-heading: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+
+  /* ── Radii ── */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-pill: 999px;
+  --radius-round: 50%;
+  --radius-device: 34px;
+  --radius-device-screen: 25px;
+  --radius-window: 10px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 3px color-mix(in srgb, var(--color-shadow) 10%, transparent);
+  --shadow-md: 0 6px 20px color-mix(in srgb, var(--color-shadow) 30%, transparent);
+  --shadow-lg: 0 24px 60px color-mix(in srgb, var(--color-shadow) 30%, transparent);
+  --shadow-toolbar: 0 1px 2px color-mix(in srgb, var(--color-shadow) 8%, transparent), 0 6px 20px color-mix(in srgb, var(--color-shadow) 12%, transparent);
+  --shadow-device: inset 0 0 0 1px color-mix(in srgb, var(--color-on-shadow) 8%, transparent), 0 24px 60px color-mix(in srgb, var(--color-shadow) 35%, transparent);
+
+  color-scheme: light;
+}
+
+/* The home page: warm brown-black, gold and cream, matched to the dark of its
+   photographs (art/home) so they fade into the page without an edge. */
+[data-theme='dark'] {
+  --color-bg: #17100c;
+  --color-surface: #231812;
+  --color-text: #f5ebe0;
+  --color-text-muted: #b9a999;
+  --color-text-faint: color-mix(in srgb, var(--color-text-muted) 72%, transparent);
+  --color-line: color-mix(in srgb, var(--color-accent) 25%, transparent);
+  --color-line-strong: color-mix(in srgb, var(--color-accent) 70%, transparent);
+
+  --color-accent: #c9a24b;
+  --color-accent-light: #e0c27f;
+  --color-accent-text: #17100c;
+  /* Blush, for small highlights only. */
+  --color-accent-soft: #e2aaa0;
+
+  color-scheme: dark;
+}

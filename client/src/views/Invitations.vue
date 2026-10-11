@@ -81,10 +81,10 @@ async function remove(item) {
 .heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .list { margin: 16px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; }
 .invitation { display: flex; gap: 14px; }
-.invitation__cover { width: 72px; height: 90px; object-fit: cover; border-radius: 8px; flex: none; }
+.invitation__cover { width: 72px; height: 90px; object-fit: cover; border-radius: var(--radius-md); flex: none; }
 .invitation__body { flex: 1; min-width: 0; }
 .invitation h2 { margin: 0 0 4px; font-size: 1.1rem; overflow-wrap: anywhere; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
 .status { font-weight: 600; }
-.status--published { color: var(--ok); }
+.status--published { color: var(--color-success); }
 </style>

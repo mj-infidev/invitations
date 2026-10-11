@@ -1,15 +1,16 @@
 <template>
   <!--
     The home page: photographs only (art/home, as WebP in phone and desktop
-    sizes), deep maroon and gold, Cormorant Garamond headings, few words.
+    sizes), the site theme's dark scheme (assets/theme.css), few words, and
+    nothing tied to one tradition: the templates carry their own wording.
     Sections reveal gently on scroll (GSAP); with reduced motion they're simply there.
   -->
-  <div ref="root" class="home">
+  <div ref="root" class="home" data-theme="dark">
     <!-- Hero -->
     <section class="hero">
       <picture class="hero__photo" data-hero-photo>
         <source media="(max-width: 767px)" :srcset="`${photos.heroMobile640} 640w, ${photos.heroMobile941} 941w`" sizes="100vw" />
-        <img :src="photos.heroDesktop1672" :srcset="`${photos.heroDesktop960} 960w, ${photos.heroDesktop1672} 1672w`" sizes="100vw" alt="A temple gopuram at sunset, with brass lamps and jasmine garlands" fetchpriority="high" />
+        <img :src="photos.heroDesktop1672" :srcset="`${photos.heroDesktop960} 960w, ${photos.heroDesktop1672} 1672w`" sizes="100vw" alt="Roses, jasmine and pearls around a cream invitation card, lit by warm candlelight" fetchpriority="high" />
       </picture>
       <div class="hero__shade" />
 
@@ -17,16 +18,20 @@
         <h1 data-hero-line><span class="line">Wedding invitations,</span> <span class="line">brought to life</span></h1>
         <p class="hero__line" data-hero-line>An animated invitation your guests open on WhatsApp, and remember.</p>
         <div class="buttons" data-hero-line>
-          <router-link :to="createLink" class="btn btn--gold">Create my invitation</router-link>
+          <router-link :to="createLink" class="btn btn--primary">Create my invitation</router-link>
           <a href="#demo" class="btn btn--ghost" @click.prevent="scrollToDemo">See a demo</a>
         </div>
+        <p class="hero__templates" data-hero-line>
+          <span class="hero__templates-label">Available now</span>
+          {{ templateNames }}<span class="hero__templates-soon"> · More coming soon</span>
+        </p>
       </div>
     </section>
 
     <!-- How it works -->
     <section class="steps section">
       <div class="steps__photo" data-reveal>
-        <img :src="photos.details1448" :srcset="`${photos.details760} 760w, ${photos.details1448} 1448w`" sizes="(min-width: 900px) 42vw, 100vw" alt="A lit brass lamp beside a silk saree and jasmine" loading="lazy" />
+        <img :src="photos.details1122" :srcset="`${photos.details560} 560w, ${photos.details1122} 1122w`" sizes="(min-width: 900px) 42vw, 100vw" alt="A blank invitation card and envelope on dark silk, with roses, a gold ribbon and two rings" loading="lazy" />
       </div>
       <div class="steps__text">
         <p class="eyebrow" data-reveal>How it works</p>
@@ -46,14 +51,14 @@
     <!-- The demo, in a phone or a desktop window; on phones, a button that opens it -->
     <section id="demo" ref="demoSection" class="demo section">
       <picture class="demo__photo">
-        <img :src="photos.mandapam1448" :srcset="`${photos.mandapam800} 800w, ${photos.mandapam1448} 1448w`" sizes="100vw" alt="" loading="lazy" />
+        <img :src="photos.mandapam1672" :srcset="`${photos.mandapam800} 800w, ${photos.mandapam1672} 1672w`" sizes="100vw" alt="" loading="lazy" />
       </picture>
       <div class="demo__shade" />
 
       <div class="demo__text">
         <p class="eyebrow" data-reveal>The invitation</p>
         <h2 data-reveal><span class="line">Seven scenes.</span> <span class="line">One scroll.</span></h2>
-        <p data-reveal>From the temple at sunset to the final welcome, every detail unfolds as your guests scroll.</p>
+        <p data-reveal>From the first scene to the final welcome, every detail unfolds as your guests scroll.</p>
       </div>
 
       <div class="demo__phone" data-reveal :style="{ '--frame-h': `${demoFrameHeight}px` }">
@@ -86,7 +91,7 @@
           <li>A link for WhatsApp</li>
           <li>Changes until the wedding day</li>
         </ul>
-        <router-link :to="createLink" class="btn btn--gold">Create my invitation</router-link>
+        <router-link :to="createLink" class="btn btn--primary">Create my invitation</router-link>
         <p class="price__free">Preview free. Pay only when you love it.</p>
       </div>
     </section>
@@ -104,8 +109,6 @@
 </template>
 
 <script setup>
-import '@fontsource/cormorant-garamond/500.css'
-import '@fontsource/cormorant-garamond/600.css'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -115,24 +118,26 @@ import heroDesktop960 from '../assets/home/hero-desktop-960.webp'
 import heroDesktop1672 from '../assets/home/hero-desktop-1672.webp'
 import heroMobile640 from '../assets/home/hero-mobile-640.webp'
 import heroMobile941 from '../assets/home/hero-mobile-941.webp'
-import details760 from '../assets/home/details-760.webp'
-import details1448 from '../assets/home/details-1448.webp'
+import details560 from '../assets/home/details-560.webp'
+import details1122 from '../assets/home/details-1122.webp'
 import mandapam800 from '../assets/home/mandapam-800.webp'
-import mandapam1448 from '../assets/home/mandapam-1448.webp'
+import mandapam1672 from '../assets/home/mandapam-1672.webp'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const photos = { heroDesktop960, heroDesktop1672, heroMobile640, heroMobile941, details760, details1448, mandapam800, mandapam1448 }
+const photos = { heroDesktop960, heroDesktop1672, heroMobile640, heroMobile941, details560, details1122, mandapam800, mandapam1672 }
 
 const STEPS = [
-  { title: 'Tell your story', text: 'Names, muhurtham, venue and photos. Saved as you type.' },
+  { title: 'Tell your story', text: 'Names, date and time, venue and photos. Saved as you type.' },
   { title: 'See it first', text: 'Preview the real invitation, free, before you pay.' },
   { title: 'Share the link', text: 'Pay once, send it on WhatsApp, edit until the big day.' },
 ]
 
 const root = ref(null)
 const demoSection = ref(null)
-const template = ref(null)
+const templates = ref([])
+// The first template is the one the page shows and links to.
+const template = computed(() => templates.value[0] ?? null)
 const showDemo = ref(false)
 const demoDevice = ref('phone')
 // The phone and the window share one height: 640 px, or less on short screens
@@ -141,6 +146,9 @@ const frameHeightFor = () => Math.round(Math.min(640, Math.max(420, window.inner
 const demoFrameHeight = ref(frameHeightFor())
 const onResize = () => { demoFrameHeight.value = frameHeightFor() }
 const year = new Date().getFullYear()
+
+// "Tamil Hindu wedding", or every template's name once there are more.
+const templateNames = computed(() => templates.value.map((t) => t.name).join(' · ') || 'Tamil Hindu wedding')
 
 const createLink = computed(() => ({ name: 'create', query: { template: template.value?.slug ?? 'tamil-hindu-wedding' } }))
 const demoUrl = computed(() => template.value?.demo_url ?? null)
@@ -183,7 +191,7 @@ onMounted(async () => {
   observer.observe(demoSection.value)
 
   try {
-    template.value = (await api('/api/templates')).data[0] ?? null
+    templates.value = (await api('/api/templates')).data
   } catch {
     // The page still works on its defaults; Create goes to the usual template.
   }
@@ -197,23 +205,16 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+/* Colours, fonts, radii and shadows: the site theme's dark scheme (assets/theme.css). */
 .home {
-  --maroon-950: #140306;
-  --maroon-900: #1f0509;
-  --maroon-800: #2b0810;
-  --gold: #d4a84f;
-  --gold-light: #ecd08f;
-  --ivory: #f6eee0;
-  --ivory-dim: rgb(246 238 224 / 0.72);
-  --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
   --column: 1200px;
   --gutter: clamp(20px, 6vw, 96px);
 
-  background: var(--maroon-900);
-  color: var(--ivory);
+  background: var(--color-bg);
+  color: var(--color-text);
 }
 
-h1, h2, h3 { font-family: var(--serif); font-weight: 600; margin: 0; }
+h1, h2, h3 { font-family: var(--font-heading); font-weight: 600; margin: 0; }
 
 /* A heading of two short sentences: one per line. */
 .line { display: block; }
@@ -226,7 +227,7 @@ h2 {
 
 .eyebrow {
   margin: 0 0 18px;
-  color: var(--gold);
+  color: var(--color-accent);
   font-size: 0.78rem;
   letter-spacing: 0.32em;
   text-transform: uppercase;
@@ -248,7 +249,7 @@ h2 {
   justify-content: center;
   min-height: 52px;
   padding: 14px 30px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.98rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -256,11 +257,11 @@ h2 {
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
 
-.btn--gold { background: var(--gold); color: var(--maroon-950); }
-.btn--gold:hover { background: var(--gold-light); }
-.btn--ghost { border: 1px solid rgb(212 168 79 / 0.7); color: var(--ivory); }
-.btn--ghost:hover { border-color: var(--gold-light); color: var(--gold-light); }
-.btn:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+.btn--primary { background: var(--color-accent); color: var(--color-accent-text); }
+.btn--primary:hover { background: var(--color-accent-light); }
+.btn--ghost { border: 1px solid color-mix(in srgb, var(--color-accent) 70%, transparent); color: var(--color-text); }
+.btn--ghost:hover { border-color: var(--color-accent-light); color: var(--color-accent-light); }
+.btn:focus-visible { outline: 2px solid var(--color-accent-light); outline-offset: 3px; }
 
 /* ── Hero ─────────────────────────────────────────────────── */
 
@@ -281,15 +282,17 @@ h2 {
   height: 100%;
 }
 
-.hero__photo img { object-fit: cover; object-position: 70% center; }
+.hero__photo img { object-fit: cover; object-position: center; }
 
-/* Dark on the left, where the words are; the temple stays bright on the right. */
+/* Dark on the left, where the words are, and the foot of the photo fading into
+   the page; the flowers stay bright on the right. */
 .hero__shade {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgb(20 3 6 / 0.94) 0%, rgb(20 3 6 / 0.78) 34%, rgb(20 3 6 / 0.12) 68%, rgb(20 3 6 / 0) 100%),
-    linear-gradient(0deg, rgb(20 3 6 / 0.6) 0%, rgb(20 3 6 / 0) 30%);
+    linear-gradient(0deg, var(--color-bg) 0%, color-mix(in srgb, var(--color-bg) 70%, transparent) 8%, transparent 26%),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 88%, transparent) 0%, color-mix(in srgb, var(--color-bg) 62%, transparent) 32%, color-mix(in srgb, var(--color-bg) 8%, transparent) 60%, transparent 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-bg) 45%, transparent) 0%, transparent 14%);
 }
 
 /* The words start where the column below does. */
@@ -306,10 +309,26 @@ h2 {
   letter-spacing: -0.015em;
 }
 
+.hero__templates {
+  margin: 28px 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.hero__templates-label {
+  margin-right: 10px;
+  color: var(--color-accent-soft);
+  font-size: 0.72rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.hero__templates-soon { color: var(--color-text-faint); white-space: nowrap; }
+
 .hero__line {
   margin: 24px 0 40px;
   max-width: 30ch;
-  color: var(--ivory-dim);
+  color: var(--color-text-muted);
   font-size: clamp(1.05rem, 1.6vw, 1.25rem);
   line-height: 1.6;
 }
@@ -320,7 +339,7 @@ h2 {
   display: grid;
   gap: clamp(48px, 7vw, 112px);
   align-items: center;
-  background: var(--maroon-800);
+  background: var(--color-bg);
 }
 
 .steps__photo img {
@@ -328,8 +347,8 @@ h2 {
   width: 100%;
   aspect-ratio: 4 / 5;
   object-fit: cover;
-  object-position: 30% center;
-  border-radius: 4px;
+  object-position: center;
+  border-radius: var(--radius-xs);
 }
 
 .steps__list {
@@ -346,14 +365,14 @@ h2 {
 .steps__number {
   flex: none;
   width: 2.2ch;
-  font-family: var(--serif);
+  font-family: var(--font-heading);
   font-size: 2.6rem;
   line-height: 1;
-  color: var(--gold);
+  color: var(--color-accent);
 }
 
 .steps h3 { font-size: clamp(1.6rem, 2.4vw, 2rem); line-height: 1.15; }
-.steps__list p { margin: 8px 0 0; color: var(--ivory-dim); line-height: 1.6; }
+.steps__list p { margin: 8px 0 0; color: var(--color-text-muted); line-height: 1.6; }
 
 /* ── Demo ─────────────────────────────────────────────────── */
 
@@ -377,13 +396,18 @@ h2 {
 }
 
 .demo__photo img { object-fit: cover; }
-.demo__shade { background: linear-gradient(90deg, rgb(20 3 6 / 0.9) 0%, rgb(20 3 6 / 0.72) 50%, rgb(20 3 6 / 0.5) 100%); }
+/* Faded into the page at the top and bottom, so the photo has no edge; darker on the left for the words. */
+.demo__shade {
+  background:
+    linear-gradient(180deg, var(--color-bg) 0%, transparent 18%, transparent 82%, var(--color-bg) 100%),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-bg) 88%, transparent) 0%, color-mix(in srgb, var(--color-bg) 66%, transparent) 45%, color-mix(in srgb, var(--color-bg) 45%, transparent) 100%);
+}
 
 .demo__text,
 .demo__phone { position: relative; }
 
 .demo__text { max-width: 480px; }
-.demo__text > p:not(.eyebrow) { margin: 24px 0 36px; color: var(--ivory-dim); font-size: 1.1rem; line-height: 1.7; }
+.demo__text > p:not(.eyebrow) { margin: 24px 0 36px; color: var(--color-text-muted); font-size: 1.1rem; line-height: 1.7; }
 
 .demo__phone {
   display: flex;
@@ -393,15 +417,15 @@ h2 {
   width: 100%;
 }
 
-.demo__placeholder { height: var(--frame-h, 640px); max-width: 100%; aspect-ratio: 390 / 844; border-radius: 34px; background: rgb(0 0 0 / 0.35); }
+.demo__placeholder { height: var(--frame-h, 640px); max-width: 100%; aspect-ratio: 390 / 844; border-radius: var(--radius-device); background: color-mix(in srgb, var(--color-shadow) 35%, transparent); }
 
 /* The narrow-window button, in the page's gold. */
-.demo__phone { --preview-button-bg: var(--gold); --preview-button-ink: var(--maroon-950); }
-.demo__hint { margin: 0; color: var(--ivory-dim); font-size: 0.85rem; letter-spacing: 0.08em; }
+.demo__phone { --preview-button-bg: var(--color-accent); --preview-button-ink: var(--color-accent-text); }
+.demo__hint { margin: 0; color: var(--color-text-muted); font-size: 0.85rem; letter-spacing: 0.08em; }
 
 /* ── Price ────────────────────────────────────────────────── */
 
-.price { text-align: center; background: var(--maroon-900); }
+.price { text-align: center; background: var(--color-bg); }
 .price h2 { margin: 0 auto; }
 
 .price__card {
@@ -411,28 +435,28 @@ h2 {
   max-width: 420px;
   margin: 64px auto 0;
   padding: 56px clamp(24px, 5vw, 48px);
-  border: 1px solid rgb(212 168 79 / 0.35);
-  border-radius: 6px;
-  background: var(--maroon-800);
+  border: 1px solid color-mix(in srgb, var(--color-accent) 35%, transparent);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
 }
 
-.price__name { margin: 0; color: var(--gold); font-size: 0.8rem; letter-spacing: 0.28em; text-transform: uppercase; }
-.price__amount { margin: 18px 0 0; font-family: var(--serif); font-size: clamp(4rem, 9vw, 5.5rem); font-weight: 500; line-height: 1; }
-.price__once { margin: 6px 0 32px; color: var(--ivory-dim); }
+.price__name { margin: 0; color: var(--color-accent); font-size: 0.8rem; letter-spacing: 0.28em; text-transform: uppercase; }
+.price__amount { margin: 18px 0 0; font-family: var(--font-heading); font-size: clamp(4rem, 9vw, 5.5rem); font-weight: 500; line-height: 1; }
+.price__once { margin: 6px 0 32px; color: var(--color-text-muted); }
 
 .price__card ul {
   width: 100%;
   margin: 0 0 36px;
   padding: 28px 0 0;
-  border-top: 1px solid rgb(212 168 79 / 0.25);
+  border-top: 1px solid color-mix(in srgb, var(--color-accent) 25%, transparent);
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  color: var(--ivory-dim);
+  color: var(--color-text-muted);
 }
 
-.price__free { margin: 18px 0 0; color: var(--ivory-dim); font-size: 0.9rem; }
+.price__free { margin: 18px 0 0; color: var(--color-text-muted); font-size: 0.9rem; }
 
 /* ── Footer ───────────────────────────────────────────────── */
 
@@ -442,16 +466,16 @@ h2 {
   align-items: center;
   gap: 18px;
   padding: 64px 20px 48px;
-  border-top: 1px solid rgb(212 168 79 / 0.18);
-  background: var(--maroon-950);
+  border-top: 1px solid color-mix(in srgb, var(--color-accent) 18%, transparent);
+  background: var(--color-surface);
   text-align: center;
 }
 
-.footer__brand { margin: 0; font-family: var(--serif); font-size: 1.8rem; font-weight: 600; }
+.footer__brand { margin: 0; font-family: var(--font-heading); font-size: 1.8rem; font-weight: 600; }
 .footer__links { display: flex; gap: 28px; }
-.footer__links a { color: var(--ivory-dim); text-decoration: none; }
-.footer__links a:hover { color: var(--gold-light); }
-.footer__small { margin: 0; color: rgb(246 238 224 / 0.45); font-size: 0.82rem; }
+.footer__links a { color: var(--color-text-muted); text-decoration: none; }
+.footer__links a:hover { color: var(--color-accent-light); }
+.footer__small { margin: 0; color: var(--color-text-faint); font-size: 0.82rem; }
 
 /* ── Wider screens ────────────────────────────────────────── */
 
@@ -472,18 +496,27 @@ h2 {
 /* ── Phones ───────────────────────────────────────────────── */
 
 @media (max-width: 767px) {
-  .hero { align-items: flex-end; }
-  .hero__photo img { object-position: center 30%; }
+  /* The phone photo is dark in its upper half and has its flowers at the foot:
+     the words sit high, and the foot fades into the page. */
+  .hero { align-items: flex-start; }
+  .hero__photo img { object-position: center bottom; }
 
-  /* The words sit low, over the dark floor; the temple stays clear above. */
   .hero__shade {
-    background: linear-gradient(0deg, rgb(20 3 6 / 0.96) 0%, rgb(20 3 6 / 0.82) 38%, rgb(20 3 6 / 0.15) 66%, rgb(20 3 6 / 0.45) 100%);
+    background:
+      linear-gradient(180deg, color-mix(in srgb, var(--color-bg) 78%, transparent) 0%, color-mix(in srgb, var(--color-bg) 62%, transparent) 45%, color-mix(in srgb, var(--color-bg) 40%, transparent) 60%, transparent 74%, transparent 82%, var(--color-bg) 100%);
   }
 
-  .hero__content { padding-bottom: max(56px, env(safe-area-inset-bottom)); }
+  .hero__content { padding-top: 88px; padding-bottom: 48px; }
+  .hero__line { margin: 18px 0 28px; }
+  .hero__templates { margin-top: 22px; }
+  .hero__templates-label { display: block; margin: 0 0 6px; }
   .buttons .btn { flex: 1 1 100%; }
   .steps__photo img { aspect-ratio: 4 / 3; }
-  .demo__shade { background: rgb(20 3 6 / 0.8); }
+  .demo__shade {
+    background:
+      linear-gradient(180deg, var(--color-bg) 0%, transparent 14%, transparent 86%, var(--color-bg) 100%),
+      color-mix(in srgb, var(--color-bg) 80%, transparent);
+  }
 
   /* Phones get only the button that opens the demo. */
   .demo__placeholder,

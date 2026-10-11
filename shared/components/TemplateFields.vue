@@ -129,9 +129,9 @@ function removeItem(field, index) {
 .field { display: flex; flex-direction: column; gap: 6px; }
 
 .label { margin: 0; font-weight: 600; font-size: 0.95rem; }
-.required { color: var(--accent, #8c1d3a); }
-.hint { margin: 0; font-size: 0.85rem; color: var(--muted, #6b5b55); }
-.error { margin: 2px 0 0; font-size: 0.85rem; color: var(--danger, #b42318); }
+.required { color: var(--color-accent); }
+.hint { margin: 0; font-size: 0.85rem; color: var(--color-text-muted); }
+.error { margin: 2px 0 0; font-size: 0.85rem; color: var(--color-danger); }
 
 .field__langs { display: grid; gap: 10px; }
 
@@ -140,16 +140,16 @@ function removeItem(field, index) {
 }
 
 .field__lang { display: flex; flex-direction: column; gap: 4px; }
-.lang-label { font-size: 0.8rem; color: var(--muted, #6b5b55); }
+.lang-label { font-size: 0.8rem; color: var(--color-text-muted); }
 
 input,
 textarea {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid var(--line-strong, #cfc4bf);
-  border-radius: 8px;
-  background: #fff;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
   font: inherit;
   color: inherit;
 }
@@ -161,12 +161,12 @@ textarea:lang(ta) { line-height: 1.6; }
 
 input:focus,
 textarea:focus {
-  outline: 2px solid var(--accent, #8c1d3a);
+  outline: 2px solid var(--color-accent);
   outline-offset: 1px;
   border-color: transparent;
 }
 
-[aria-invalid='true'] { border-color: var(--danger, #b42318); }
+[aria-invalid='true'] { border-color: var(--color-danger); }
 
 .repeater {
   display: flex;
@@ -182,8 +182,8 @@ textarea:focus {
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-  border: 1px dashed var(--line-strong, #cfc4bf);
-  border-radius: 10px;
+  border: 1px dashed var(--color-line-strong);
+  border-radius: var(--radius-lg);
 }
 
 .visually-hidden {
@@ -203,7 +203,7 @@ textarea:focus {
   border: 0;
   background: none;
   font: inherit;
-  color: var(--accent, #8c1d3a);
+  color: var(--color-accent);
   cursor: pointer;
 }
 
@@ -213,7 +213,7 @@ textarea:focus {
   align-self: flex-start;
   min-height: 44px;
   padding: 8px 14px;
-  border: 1px solid var(--accent, #8c1d3a);
-  border-radius: 999px;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-pill);
 }
 </style>

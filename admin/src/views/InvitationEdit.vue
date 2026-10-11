@@ -321,12 +321,12 @@ async function copyLink() {
 .side h2 { margin: 0 0 10px; font-size: 1rem; }
 
 .choices { display: flex; flex-wrap: wrap; gap: 8px; }
-.choice { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 14px; border: 1px solid var(--line-strong); border-radius: 999px; cursor: pointer; }
-.choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.choice { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 6px 14px; border: 1px solid var(--color-line-strong); border-radius: var(--radius-pill); cursor: pointer; }
+.choice:has(input:checked) { border-color: var(--color-accent); background: var(--color-accent-soft); }
 
 .photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 10px; margin: 0; padding: 0; list-style: none; }
 .photos li { display: flex; flex-direction: column; gap: 4px; }
-.photos img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 8px; }
+.photos img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius-md); }
 
 .save-bar {
   position: sticky;
@@ -336,14 +336,14 @@ async function copyLink() {
   align-items: center;
   gap: 10px;
   padding: 12px 0;
-  background: var(--bg);
+  background: var(--color-bg);
 }
 
 .orders { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .orders li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 
-.dialog { width: min(92vw, 560px); padding: 20px; border: 0; border-radius: 14px; box-shadow: 0 20px 60px rgb(0 0 0 / 0.25); }
-.dialog::backdrop { background: rgb(0 0 0 / 0.35); }
+.dialog { width: min(92vw, 560px); padding: 20px; border: 0; border-radius: var(--radius-xl); box-shadow: var(--shadow-dialog); }
+.dialog::backdrop { background: color-mix(in srgb, var(--color-shadow) 35%, transparent); }
 .dialog h2 { margin: 0; font-size: 1.15rem; }
 .change-list { margin: 0; padding-left: 18px; max-height: 40vh; overflow: auto; overflow-wrap: anywhere; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: 10px; }

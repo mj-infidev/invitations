@@ -3,9 +3,11 @@
  *
  *   node scripts/scene-art.mjs <template-slug> [scene=phone.png[,desktop.png] ...]
  *
- * Reads ../art/scenes/<slug>/phone/<scene>.png (portrait) and, if there is one,
- * ../art/scenes/<slug>/desktop/<scene>.png (landscape); `scene=` arguments take
- * a scene's pictures from elsewhere. Writes public/scenes/<slug>/<scene>-phone-<w>.webp
+ * Reads each scene's portrait picture and, if there is one, its landscape one, from
+ * ../art/scenes/<slug>/ in either layout:
+ *   <scene>.png and <scene>-desktop.png, or phone/<scene>.png and desktop/<scene>.png
+ * (the flat files win where both exist). `scene=` arguments take a scene's
+ * pictures from elsewhere. Writes public/scenes/<slug>/<scene>-phone-<w>.webp
  * and <scene>-desktop-<w>.webp, which the page finds by the invitation's
  * template slug (App\Support\InvitationPage::sceneArt). Needs ffmpeg on the PATH.
  *
@@ -36,6 +38,10 @@ const pngs = (shape) => {
 
 const phone = pngs('phone')
 const desktop = pngs('desktop')
+for (const [name, file] of Object.entries(pngs('.'))) {
+  if (name.endsWith('-desktop')) desktop[name.slice(0, -'-desktop'.length)] = file
+  else phone[name] = file
+}
 for (const arg of overrides) {
   const [scene, files] = arg.split('=')
   const [p, d] = files.split(',').map((file) => resolve(file))

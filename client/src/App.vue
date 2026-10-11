@@ -1,6 +1,6 @@
 <template>
   <!-- Over the home page's full-screen photo, the header is transparent. -->
-  <header class="site-header" :class="{ 'site-header--overlay': route.name === 'home' }">
+  <header class="site-header" :class="{ 'site-header--overlay': route.name === 'home' }" :data-theme="route.name === 'home' ? 'dark' : null">
     <router-link to="/" class="brand">Invitations</router-link>
     <nav v-if="ready" class="site-header__nav">
       <template v-if="user">

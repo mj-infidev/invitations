@@ -1,0 +1,53 @@
+/*
+ * Tamil Hindu wedding: this template's theme. Every colour and font the
+ * invitation uses is here; the viewer's shared styles (../../base.css) and this
+ * template's scenes (style.css) only use the variables.
+ *
+ * Each template has its own theme.css, loaded by its own Vite entry (index.js),
+ * which the page picks by the invitation's template slug. A new template copies
+ * this file and changes the values; no scene code changes.
+ *
+ * Separate from the customer site's brand theme (client/src/assets/theme.css):
+ * the invitation is its own page, so neither can change the other.
+ */
+
+/* Fonts, self-hosted. Each file declares every subset with a unicode-range, and
+   the browser downloads only the Tamil and Latin pieces the page uses. */
+@import '@fontsource/tiro-tamil/400.css';
+@import '@fontsource/anek-tamil/400.css';
+@import '@fontsource/anek-tamil/600.css';
+@import '@fontsource/great-vibes/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/500-italic.css';
+@import '@fontsource/cormorant-garamond/600.css';
+
+:root {
+    /* ── Colours: deep maroon, gold, ivory ── */
+    /* Behind the pictures while they load, and the page edges. */
+    --color-bg: #2e0711;
+    /* The dark of the gradients over each picture. */
+    --color-shade: #0e0306;
+    /* Shadows under text and frames. */
+    --color-shadow: #0a0204;
+    --color-text: #f6eee0;
+    --color-text-muted: color-mix(in srgb, var(--color-text) 82%, transparent);
+    --color-accent: #d4a84f;
+    --color-accent-light: #ecd08f;
+    --color-accent-text: #1f0509;
+    /* The "Preview" watermark on unpaid drafts. */
+    --color-watermark: #ffffff;
+
+    /* ── Fonts ──
+       Only the weights imported above exist: 400 for the Tamil heading and the
+       script font, 400/600 Anek Tamil, 500/600 (and 500 italic) Cormorant Garamond.
+       The phone's own fonts are the fallback. */
+    --font-heading: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-body: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --font-script: 'Great Vibes', 'Segoe Script', cursive;
+    --font-heading-ta: 'Tiro Tamil', 'Noto Serif Tamil', 'Nirmala UI', 'Latha', serif;
+    --font-body-ta: 'Anek Tamil', 'Noto Sans Tamil', 'Nirmala UI', 'Latha', sans-serif;
+    /* Cormorant Garamond has small lowercase letters: English reads a size up. */
+    --font-size-en: 112.5%;
+    /* The language switch reads the same in both views: Anek Tamil has Latin too. */
+    --font-ui: var(--font-body-ta);
+}

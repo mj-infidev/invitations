@@ -31,7 +31,7 @@ const show = (value) => (value === null || value === undefined || value === '' ?
 
 <style scoped>
 .history { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
-.history > li { padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.history > li { padding-bottom: 12px; border-bottom: 1px solid var(--color-line); }
 .history > li:last-child { border-bottom: 0; }
 .history__head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; }
 .history__reason { margin: 4px 0 0; }

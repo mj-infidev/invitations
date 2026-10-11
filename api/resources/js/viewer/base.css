@@ -5,39 +5,26 @@
  *
  * Elements that scenes animate never get a CSS transform: GSAP owns their
  * transform, and a CSS one would be read once and then fight it on resize.
+ *
+ * Colours and fonts come from the template's theme.css (templates/<slug>/);
+ * nothing here names one.
  */
 
 :root {
-    --maroon: #5b0f1f;
-    --maroon-deep: #2e0711;
-    --red: #8c1d3a;
-    --gold: #e0a93b;
-    --gold-light: #f6d27a;
-    --cream: #fff6e3;
-    --ink: #3b1a10;
-
-    /* Self-hosted (Fontsource, bundled by Vite); the phone's own fonts are the fallback.
-       Only the weights loaded in the template's index.js exist: 400 for the Tamil
-       heading and script fonts, 400/600 Anek Tamil, 500/600 Cormorant Garamond. */
-    --font-tamil-heading: 'Tiro Tamil', 'Noto Serif Tamil', 'Nirmala UI', 'Latha', serif;
-    --font-tamil-body: 'Anek Tamil', 'Noto Sans Tamil', 'Nirmala UI', 'Latha', sans-serif;
-    --font-en-name: 'Great Vibes', 'Segoe Script', cursive;
-    --font-en: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
-
     --gutter: max(20px, env(safe-area-inset-left));
-    color-scheme: light;
+    color-scheme: dark;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
     margin: 0;
-    background: var(--maroon-deep);
-    color: var(--cream);
+    background: var(--color-bg);
+    color: var(--color-text);
 }
 
 body {
-    font-family: var(--font-en);
+    font-family: var(--font-body);
     font-weight: 500;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
@@ -53,7 +40,7 @@ p, h1, h2, h3, figure { margin: 0; }
 
 /* Tamil runs longer and stacks vowel signs above and below: more line height. */
 :lang(ta) {
-    font-family: var(--font-tamil-body);
+    font-family: var(--font-body-ta);
     line-height: 1.6;
 }
 
@@ -74,7 +61,7 @@ svg { display: block; }
     justify-content: center;
     gap: 16px;
     padding: max(48px, env(safe-area-inset-top)) var(--gutter) max(48px, env(safe-area-inset-bottom));
-    background: var(--maroon-deep);
+    background: var(--color-bg);
 }
 
 /*
@@ -140,12 +127,13 @@ html[lang="ta"] :is(.invitation, .watermark) [lang="en"] {
 /* Tamil view: every character comes from the Tamil fonts, digits and punctuation
    too. Anything styled with the English fonts falls to their Tamil counterparts. */
 html[lang="ta"] {
-    --font-en: var(--font-tamil-body);
-    --font-en-name: var(--font-tamil-heading);
+    --font-body: var(--font-body-ta);
+    --font-heading: var(--font-heading-ta);
+    --font-script: var(--font-heading-ta);
 }
 
-/* Cormorant Garamond has small lowercase letters: English reads a size up. */
-html[lang="en"] { font-size: 112.5%; }
+/* Some English fonts draw small: the theme can set English a size up. */
+html[lang="en"] { font-size: var(--font-size-en, 100%); }
 
 .lang-switch {
     position: fixed;
@@ -154,11 +142,11 @@ html[lang="en"] { font-size: 112.5%; }
     right: max(12px, env(safe-area-inset-right));
     display: flex;
     padding: 3px;
-    border: 1px solid rgb(224 169 59 / 0.7);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 70%, transparent);
     border-radius: 999px;
-    background: rgb(46 7 17 / 0.75);
+    background: color-mix(in srgb, var(--color-bg) 75%, transparent);
     /* Anek Tamil has Latin too, so the switch reads the same in both views. */
-    font-family: var(--font-tamil-body);
+    font-family: var(--font-ui);
     font-size: 13px;
     line-height: 1;
 }
@@ -170,19 +158,19 @@ html[lang="en"] { font-size: 112.5%; }
     border: 0;
     border-radius: 999px;
     background: transparent;
-    color: var(--gold-light);
+    color: var(--color-accent-light);
     font: inherit;
     cursor: pointer;
 }
 
 .lang-switch button[aria-pressed="true"] {
-    background: var(--gold);
-    color: var(--maroon-deep);
+    background: var(--color-accent);
+    color: var(--color-accent-text);
     font-weight: 600;
 }
 
 .lang-switch button:focus-visible {
-    outline: 2px solid var(--gold-light);
+    outline: 2px solid var(--color-accent-light);
     outline-offset: 2px;
 }
 
@@ -190,7 +178,7 @@ html[lang="en"] { font-size: 112.5%; }
     font-size: 0.8rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--color-accent);
 }
 
 .eyebrow:lang(ta) {
@@ -205,8 +193,8 @@ html[lang="en"] { font-size: 112.5%; }
     min-height: 48px;
     padding: 10px 22px;
     border-radius: 999px;
-    background: var(--gold);
-    color: var(--maroon-deep);
+    background: var(--color-accent);
+    color: var(--color-accent-text);
     font-weight: 600;
     text-decoration: none;
 }
@@ -222,7 +210,7 @@ html[lang="en"] { font-size: 112.5%; }
 .button:focus-visible,
 .music-toggle:focus-visible,
 .brand:focus-visible {
-    outline: 3px solid var(--gold-light);
+    outline: 3px solid var(--color-accent-light);
     outline-offset: 3px;
 }
 
@@ -241,7 +229,7 @@ html[lang="en"] { font-size: 112.5%; }
     flex-direction: column;
     align-items: center;
     font-size: 0.85rem;
-    color: var(--gold-light);
+    color: var(--color-accent-light);
 }
 
 
@@ -290,8 +278,8 @@ html[lang="en"] { font-size: 112.5%; }
     letter-spacing: 0.08em;
     text-transform: uppercase;
     white-space: nowrap;
-    color: rgb(255 255 255 / 0.28);
-    text-shadow: 0 0 3px rgb(0 0 0 / 0.45);
+    color: color-mix(in srgb, var(--color-watermark) 28%, transparent);
+    text-shadow: 0 0 3px color-mix(in srgb, var(--color-shadow) 45%, transparent);
 }
 
 /* ── Music button ───────────────────────────────────────────── */
@@ -305,10 +293,10 @@ html[lang="en"] { font-size: 112.5%; }
     height: 48px;
     display: grid;
     place-items: center;
-    border: 2px solid var(--gold);
+    border: 2px solid var(--color-accent);
     border-radius: 50%;
-    background: rgb(46 7 17 / 0.8);
-    color: var(--gold-light);
+    background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+    color: var(--color-accent-light);
     cursor: pointer;
 }
 

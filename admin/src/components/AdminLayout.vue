@@ -55,12 +55,12 @@ async function signOut() {
   align-items: center;
   gap: 14px;
   padding: 10px 16px;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface);
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-surface);
 }
 
 .brand { flex: 1; font-weight: 700; }
-.who { color: var(--muted); font-size: 0.9rem; }
+.who { color: var(--color-text-muted); font-size: 0.9rem; }
 .menu-button { display: none; border: 0; background: none; font-size: 1.4rem; cursor: pointer; }
 
 .sidebar {
@@ -68,19 +68,19 @@ async function signOut() {
   flex-direction: column;
   gap: 2px;
   padding: 12px 8px;
-  border-right: 1px solid var(--line);
-  background: var(--surface);
+  border-right: 1px solid var(--color-line);
+  background: var(--color-surface);
 }
 
 .sidebar a {
   padding: 10px 12px;
-  border-radius: 8px;
-  color: var(--text);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
   text-decoration: none;
 }
 
 .sidebar a.router-link-exact-active,
-.sidebar a.router-link-active:not([href='/']) { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.sidebar a.router-link-active:not([href='/']) { background: var(--color-accent-soft); color: var(--color-accent); font-weight: 600; }
 
 .content { min-width: 0; }
 
@@ -88,7 +88,7 @@ async function signOut() {
   .layout { grid-template-columns: 1fr; }
   .menu-button { display: block; }
   .who { display: none; }
-  .sidebar { display: none; border-right: 0; border-bottom: 1px solid var(--line); }
+  .sidebar { display: none; border-right: 0; border-bottom: 1px solid var(--color-line); }
   .menu-open .sidebar { display: flex; }
 }
 </style>

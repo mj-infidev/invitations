@@ -81,11 +81,11 @@ async function submit() {
   width: min(92vw, 480px);
   padding: 20px;
   border: 0;
-  border-radius: 14px;
-  box-shadow: 0 20px 60px rgb(0 0 0 / 0.25);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-dialog);
 }
 
-.dialog::backdrop { background: rgb(0 0 0 / 0.35); }
+.dialog::backdrop { background: color-mix(in srgb, var(--color-shadow) 35%, transparent); }
 .dialog h2 { margin: 0; font-size: 1.15rem; }
 .actions { display: flex; justify-content: flex-end; gap: 10px; }
 </style>

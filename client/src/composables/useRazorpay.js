@@ -39,7 +39,8 @@ export async function openCheckout(checkout) {
       name: checkout.name,
       description: checkout.description,
       prefill: checkout.prefill,
-      theme: { color: '#8c1d3a' },
+      // Razorpay's window in the site's accent colour, from theme.css.
+      theme: { color: getComputedStyle(document.documentElement).getPropertyValue('--color-accent').trim() },
       handler: (response) => resolve({ status: 'paid', response }),
       modal: {
         ondismiss: () => resolve(reason ? { status: 'failed', reason } : { status: 'closed' }),

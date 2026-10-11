@@ -124,7 +124,7 @@ async function remove(photo) {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 }
 
 .photos__remove {
@@ -134,9 +134,9 @@ async function remove(photo) {
   width: 32px;
   height: 32px;
   border: 0;
-  border-radius: 50%;
-  background: rgb(0 0 0 / 0.6);
-  color: #fff;
+  border-radius: var(--radius-round);
+  background: color-mix(in srgb, var(--color-shadow) 60%, transparent);
+  color: var(--color-on-shadow);
   font-size: 1.2rem;
   line-height: 1;
   cursor: pointer;
@@ -145,10 +145,10 @@ async function remove(photo) {
 .queue { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
 .queue__item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; }
 .queue__name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.queue__error { color: var(--danger, #b42318); }
+.queue__error { color: var(--color-danger); }
 progress { width: 40%; }
 
-.hint { margin: 0; font-size: 0.85rem; color: var(--muted, #6b5b55); }
+.hint { margin: 0; font-size: 0.85rem; color: var(--color-text-muted); }
 
 .upload {
   align-self: flex-start;
@@ -156,13 +156,13 @@ progress { width: 40%; }
   align-items: center;
   min-height: 44px;
   padding: 8px 16px;
-  border: 1px solid var(--accent, #8c1d3a);
-  border-radius: 999px;
-  color: var(--accent, #8c1d3a);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-pill);
+  color: var(--color-accent);
   cursor: pointer;
 }
 
-.upload:focus-within { outline: 2px solid var(--accent, #8c1d3a); outline-offset: 2px; }
+.upload:focus-within { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
 .upload input {
   position: absolute;

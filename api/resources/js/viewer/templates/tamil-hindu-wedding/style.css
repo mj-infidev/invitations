@@ -1,24 +1,20 @@
 /*
  * Tamil Hindu wedding. Each scene is one full-screen picture (public/scenes/
  * tamil-hindu-wedding) under a dark gradient, with a headline and a line or two
- * in a centred column: Cormorant Garamond, the couple's names in Great Vibes.
- * The look follows the home page: deep maroon, gold, ivory.
+ * in a centred column: headings and body in the theme's fonts, the couple's
+ * names in its script font. Colours and fonts come from theme.css.
  */
 
 .scene {
-    --ivory: #f6eee0;
-    --ivory-dim: rgb(246 238 224 / 0.82);
-    --gold: #d4a84f;
-    --gold-light: #ecd08f;
-    --shadow: 0 2px 18px rgb(10 2 4 / 0.55);
+    --text-shadow: 0 2px 18px color-mix(in srgb, var(--color-shadow) 55%, transparent);
 }
 
 /* Darker at the top and bottom, and behind the centred words; the warm light
    of the picture stays in between. */
 .scene__shade {
     background:
-        radial-gradient(ellipse 85% 48% at 50% 50%, rgb(14 3 6 / 0.62) 0%, rgb(14 3 6 / 0.28) 62%, rgb(14 3 6 / 0) 100%),
-        linear-gradient(180deg, rgb(14 3 6 / 0.62) 0%, rgb(14 3 6 / 0.12) 28%, rgb(14 3 6 / 0.12) 64%, rgb(14 3 6 / 0.78) 100%);
+        radial-gradient(ellipse 85% 48% at 50% 50%, color-mix(in srgb, var(--color-shade) 62%, transparent) 0%, color-mix(in srgb, var(--color-shade) 28%, transparent) 62%, color-mix(in srgb, var(--color-shade) 0%, transparent) 100%),
+        linear-gradient(180deg, color-mix(in srgb, var(--color-shade) 62%, transparent) 0%, color-mix(in srgb, var(--color-shade) 12%, transparent) 28%, color-mix(in srgb, var(--color-shade) 12%, transparent) 64%, color-mix(in srgb, var(--color-shade) 78%, transparent) 100%);
 }
 
 .scene__content {
@@ -26,14 +22,14 @@
     flex-direction: column;
     align-items: center;
     gap: clamp(14px, 2.4svh, 22px);
-    color: var(--ivory);
-    text-shadow: var(--shadow);
+    color: var(--color-text);
+    text-shadow: var(--text-shadow);
 }
 
 /* ── Type ───────────────────────────────────────────────────── */
 
 .headline {
-    font-family: var(--font-en);
+    font-family: var(--font-heading);
     font-weight: 500;
     font-size: clamp(2.7rem, 11vw, 5rem);
     line-height: 1.05;
@@ -46,30 +42,30 @@
 
 .lede {
     max-width: 26em;
-    font-family: var(--font-en);
+    font-family: var(--font-body);
     font-style: italic;
     font-size: clamp(1.2rem, 4.8vw, 1.55rem);
     line-height: 1.45;
-    color: var(--ivory-dim);
+    color: var(--color-text-muted);
     text-wrap: balance;
 }
 
 .scene .eyebrow {
     font-size: 0.78rem;
     letter-spacing: 0.32em;
-    color: var(--gold-light);
+    color: var(--color-accent-light);
 }
 
 /* Tamil: no italics (Tamil has none), the heading font for headlines, more room for vowel signs. */
-.headline:lang(ta), .headline :lang(ta) { font-family: var(--font-tamil-heading); line-height: 1.45; letter-spacing: 0; }
+.headline:lang(ta), .headline :lang(ta) { font-family: var(--font-heading-ta); line-height: 1.45; letter-spacing: 0; }
 .lede:lang(ta), .lede :lang(ta) { font-style: normal; line-height: 1.6; }
 
 .scene .button {
     margin-top: 6px;
-    background: var(--gold);
-    color: #1f0509;
+    background: var(--color-accent);
+    color: var(--color-accent-text);
     text-shadow: none;
-    box-shadow: 0 6px 20px rgb(10 2 4 / 0.35);
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--color-shadow) 35%, transparent);
 }
 
 /* ── 1 · Opening ────────────────────────────────────────────── */
@@ -80,17 +76,17 @@
 .scene--opening .scene__stage { justify-content: flex-end; padding-bottom: max(16svh, 110px); }
 
 .scene--opening .scene__shade {
-    background: linear-gradient(0deg, rgb(14 3 6 / 0.94) 0%, rgb(14 3 6 / 0.72) 34%, rgb(14 3 6 / 0.08) 62%, rgb(14 3 6 / 0.3) 100%);
+    background: linear-gradient(0deg, color-mix(in srgb, var(--color-shade) 94%, transparent) 0%, color-mix(in srgb, var(--color-shade) 72%, transparent) 34%, color-mix(in srgb, var(--color-shade) 8%, transparent) 62%, color-mix(in srgb, var(--color-shade) 30%, transparent) 100%);
 }
 
 .opening__suzhi {
-    font-family: var(--font-tamil-heading);
+    font-family: var(--font-heading-ta);
     font-size: clamp(1.8rem, 6vw, 2.4rem);
     line-height: 1.2;
-    color: var(--gold);
+    color: var(--color-accent);
 }
 
-.motion .scroll-hint { color: var(--gold-light); letter-spacing: 0.12em; }
+.motion .scroll-hint { color: var(--color-accent-light); letter-spacing: 0.12em; }
 
 /* ── 2 · The couple ─────────────────────────────────────────── */
 
@@ -99,7 +95,7 @@
 .couple__name {
     --fit: min(84vw, 36rem);
     display: block;
-    color: var(--gold-light);
+    color: var(--color-accent-light);
     overflow-wrap: break-word;
     text-wrap: balance;
 }
@@ -108,14 +104,14 @@
    in characters, from the Blade view): about 0.58em a character in Tamil once its
    letters are counted a quarter wider, and 0.46em in the script font. */
 .couple__name [lang="ta"] {
-    font-family: var(--font-tamil-heading);
+    font-family: var(--font-heading-ta);
     font-size: min(clamp(2.4rem, 11vw, 4.4rem), var(--fit) / (var(--longest-ta, 1) * 0.58));
     line-height: 1.5;
 }
 
 /* Great Vibes draws small for its size, so it is set large. */
 .couple__name [lang="en"] {
-    font-family: var(--font-en-name);
+    font-family: var(--font-script);
     font-size: min(clamp(4rem, 19vw, 7.5rem), var(--fit) / (var(--longest-en, 1) * 0.46));
     line-height: 1.1;
 }
@@ -123,11 +119,11 @@
 .couple__and {
     display: block;
     margin: 0.1em 0;
-    font-family: var(--font-en);
+    font-family: var(--font-body);
     font-style: italic;
     font-size: clamp(2.1rem, 8vw, 3rem);
     line-height: 1;
-    color: var(--ivory-dim);
+    color: var(--color-text-muted);
 }
 
 .couple__and :lang(ta) { font-style: normal; font-size: 0.6em; }
@@ -151,7 +147,7 @@
     max-width: 24em;
     font-style: italic;
     font-size: clamp(1.05rem, 4.2vw, 1.25rem);
-    color: var(--ivory-dim);
+    color: var(--color-text-muted);
 }
 
 .families__message:lang(ta), .families__message :lang(ta) { font-style: normal; }
@@ -170,14 +166,14 @@
 .countdown__unit {
     min-width: 4.4rem;
     padding: 2px 14px;
-    border-left: 1px solid rgb(212 168 79 / 0.55);
+    border-left: 1px solid color-mix(in srgb, var(--color-accent) 55%, transparent);
 }
 
 .countdown__unit:first-child { border-left: 0; }
 
 .countdown__value {
     display: block;
-    font-family: var(--font-en);
+    font-family: var(--font-body);
     font-size: clamp(1.9rem, 8vw, 2.6rem);
     font-variant-numeric: tabular-nums lining-nums;
     line-height: 1.1;
@@ -187,12 +183,12 @@
     font-size: 0.68rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--gold-light);
+    color: var(--color-accent-light);
 }
 
 .countdown__label:lang(ta) { letter-spacing: 0; font-size: 0.8rem; text-transform: none; }
 
-.countdown__done { display: none; font-size: 1.3rem; color: var(--gold-light); }
+.countdown__done { display: none; font-size: 1.3rem; color: var(--color-accent-light); }
 .countdown.is-done .countdown__units { display: none; }
 .countdown.is-done .countdown__done { display: block; }
 
@@ -248,9 +244,9 @@
     /* Keeps 4:5 whatever the photo's own shape (object-fit crops it). */
     min-height: 0;
     padding: 5px;
-    border: 1px solid rgb(212 168 79 / 0.85);
-    background: rgb(14 3 6 / 0.35);
-    box-shadow: 0 12px 30px rgb(10 2 4 / 0.45);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 85%, transparent);
+    background: color-mix(in srgb, var(--color-shade) 35%, transparent);
+    box-shadow: 0 12px 30px color-mix(in srgb, var(--color-shadow) 45%, transparent);
 }
 
 .photos__grid--one .photo { width: min(72vw, var(--frame-h) * 0.8); }
@@ -268,7 +264,7 @@
     place-items: center;
     font-size: 0.85rem;
     letter-spacing: 0.12em;
-    color: rgb(236 208 143 / 0.75);
+    color: color-mix(in srgb, var(--color-accent-light) 75%, transparent);
     text-shadow: none;
 }
 
@@ -282,10 +278,10 @@
     width: var(--size);
     height: var(--size);
     padding: 6px;
-    border: 1.5px solid var(--gold);
+    border: 1.5px solid var(--color-accent);
     border-radius: 50%;
-    background: rgb(14 3 6 / 0.4);
-    box-shadow: 0 0 0 6px rgb(212 168 79 / 0.16), 0 16px 40px rgb(10 2 4 / 0.5);
+    background: color-mix(in srgb, var(--color-shade) 40%, transparent);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 16%, transparent), 0 16px 40px color-mix(in srgb, var(--color-shadow) 50%, transparent);
 }
 
 .portrait img {
@@ -301,32 +297,32 @@
     place-items: center;
     font-size: 0.8rem;
     letter-spacing: 0.12em;
-    color: rgb(236 208 143 / 0.75);
+    color: color-mix(in srgb, var(--color-accent-light) 75%, transparent);
     text-shadow: none;
 }
 
 .welcome__names {
     line-height: 1.15;
-    color: var(--gold-light);
+    color: var(--color-accent-light);
     text-wrap: balance;
 }
 
 .welcome__names[lang="en"] {
-    font-family: var(--font-en-name);
+    font-family: var(--font-script);
     font-size: clamp(3rem, 13vw, 5.2rem);
 }
 
 .welcome__names[lang="ta"] {
-    font-family: var(--font-tamil-heading);
+    font-family: var(--font-heading-ta);
     font-size: clamp(1.8rem, 7.5vw, 3rem);
     line-height: 1.5;
 }
 
 .welcome__and {
-    font-family: var(--font-en);
+    font-family: var(--font-body);
     font-style: italic;
     font-size: 0.45em;
-    color: var(--ivory-dim);
+    color: var(--color-text-muted);
     vertical-align: 0.3em;
 }
 
@@ -336,9 +332,9 @@
     margin-top: 2svh;
     font-size: 0.85rem;
     letter-spacing: 0.08em;
-    color: var(--ivory-dim);
+    color: var(--color-text-muted);
     text-decoration: underline;
-    text-decoration-color: rgb(212 168 79 / 0.6);
+    text-decoration-color: color-mix(in srgb, var(--color-accent) 60%, transparent);
     text-underline-offset: 4px;
 }
 
@@ -347,16 +343,16 @@
 @media (min-aspect-ratio: 1/1) and (min-width: 768px) {
     .scene__shade {
         background:
-            radial-gradient(ellipse 46% 62% at 50% 50%, rgb(14 3 6 / 0.66) 0%, rgb(14 3 6 / 0.3) 60%, rgb(14 3 6 / 0) 100%),
-            linear-gradient(180deg, rgb(14 3 6 / 0.5) 0%, rgb(14 3 6 / 0.1) 30%, rgb(14 3 6 / 0.1) 65%, rgb(14 3 6 / 0.7) 100%);
+            radial-gradient(ellipse 46% 62% at 50% 50%, color-mix(in srgb, var(--color-shade) 66%, transparent) 0%, color-mix(in srgb, var(--color-shade) 30%, transparent) 60%, color-mix(in srgb, var(--color-shade) 0%, transparent) 100%),
+            linear-gradient(180deg, color-mix(in srgb, var(--color-shade) 50%, transparent) 0%, color-mix(in srgb, var(--color-shade) 10%, transparent) 30%, color-mix(in srgb, var(--color-shade) 10%, transparent) 65%, color-mix(in srgb, var(--color-shade) 70%, transparent) 100%);
     }
 
     .scene--opening .scene__stage { justify-content: center; padding-bottom: max(48px, env(safe-area-inset-bottom)); }
 
     .scene--opening .scene__shade {
         background:
-            radial-gradient(ellipse 42% 58% at 50% 55%, rgb(14 3 6 / 0.72) 0%, rgb(14 3 6 / 0.3) 65%, rgb(14 3 6 / 0) 100%),
-            linear-gradient(0deg, rgb(14 3 6 / 0.7) 0%, rgb(14 3 6 / 0) 40%);
+            radial-gradient(ellipse 42% 58% at 50% 55%, color-mix(in srgb, var(--color-shade) 72%, transparent) 0%, color-mix(in srgb, var(--color-shade) 30%, transparent) 65%, color-mix(in srgb, var(--color-shade) 0%, transparent) 100%),
+            linear-gradient(0deg, color-mix(in srgb, var(--color-shade) 70%, transparent) 0%, color-mix(in srgb, var(--color-shade) 0%, transparent) 40%);
     }
 
     .scene--opening .scene__art img { object-position: center; }

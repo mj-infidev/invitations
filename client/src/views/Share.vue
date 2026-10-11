@@ -92,16 +92,17 @@ async function copy() {
   min-width: 0;
   min-height: 44px;
   padding: 10px 12px;
-  border: 1px solid var(--line-strong);
-  border-radius: 8px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-md);
   font: inherit;
-  background: var(--bg);
+  background: var(--color-bg);
 }
 
 .button--whatsapp {
   gap: 8px;
-  border-color: #1f8f4e;
-  background: #1f8f4e;
+  border-color: var(--color-whatsapp);
+  background: var(--color-whatsapp);
+  color: var(--color-whatsapp-text);
   font-weight: 600;
 }
 

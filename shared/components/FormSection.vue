@@ -39,9 +39,9 @@ defineEmits(['toggle'])
 
 <style scoped>
 .form-section {
-  border: 1px solid var(--line, #e6dfdc);
-  border-radius: 12px;
-  background: var(--surface, #fff);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
   scroll-margin-top: 80px;
 }
 
@@ -67,15 +67,15 @@ button.form-section__head { cursor: pointer; min-height: 52px; }
   font-weight: 600;
 }
 
-.form-section__note { font-size: 0.85rem; color: var(--muted, #6b5b55); }
+.form-section__note { font-size: 0.85rem; color: var(--color-text-muted); }
 
 .form-section__done {
   display: grid;
   place-items: center;
   width: 22px;
   height: 22px;
-  border-radius: 50%;
-  background: var(--ok, #2f7d4b);
+  border-radius: var(--radius-round);
+  background: var(--color-success);
 }
 
 .form-section__done svg,
@@ -88,7 +88,7 @@ button.form-section__head { cursor: pointer; min-height: 52px; }
   stroke-linejoin: round;
 }
 
-.form-section__done svg { stroke: #fff; }
+.form-section__done svg { stroke: var(--color-success-text); }
 .form-section__chevron { stroke: currentColor; transition: transform 0.15s; }
 .is-open .form-section__chevron { transform: rotate(180deg); }
 

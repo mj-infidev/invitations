@@ -1,0 +1,70 @@
+/*
+ * The admin panel's theme: every colour, font, radius and shadow admin/ uses.
+ * Components use only these variables; no colour or font name appears anywhere
+ * else in admin/.
+ *
+ * The names match the customer site's theme (client/src/assets/theme.css), so
+ * the shared components in /shared work in both; the values are the admin's
+ * own, and changing one theme never changes the other.
+ */
+
+:root {
+  /* ── Colours ── */
+  --color-bg: #faf7f5;
+  --color-surface: #ffffff;
+  --color-text: #2b2220;
+  --color-text-muted: #6b5b55;
+  --color-line: #ece5e2;
+  --color-line-strong: #cfc4bf;
+
+  --color-accent: #8c1d3a;
+  --color-accent-text: #ffffff;
+  --color-accent-soft: #f8ecef;
+
+  --color-success: #2f7d4b;
+  --color-success-text: #ffffff;
+  --color-success-soft: #e3f3e8;
+  --color-danger: #b42318;
+  --color-danger-soft: #fde8e8;
+  --color-warning: #8a5a00;
+  --color-warning-soft: #fff3d6;
+
+  /* Shadows and dialog backdrops. */
+  --color-shadow: #000000;
+  --color-on-shadow: #ffffff;
+
+  /* The preview frame (shared/components/DevicePreview.vue). */
+  --color-preview-toolbar: #fbf6ee;
+  --color-preview-text: #2a1518;
+  --color-preview-active: #7a1c2c;
+  --color-preview-active-text: #ffffff;
+  --color-preview-device: #1c1416;
+  --color-preview-window: #f4efe8;
+  --color-preview-glow: #d4a84f;
+  --color-preview-fullscreen: #000000;
+  --color-window-close: #ff5f57;
+  --color-window-minimise: #febc2e;
+  --color-window-zoom: #28c840;
+
+  /* ── Fonts ── */
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Nirmala UI', 'Noto Sans Tamil', sans-serif;
+
+  /* ── Radii ── */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-pill: 999px;
+  --radius-round: 50%;
+  --radius-device: 34px;
+  --radius-device-screen: 25px;
+  --radius-window: 10px;
+
+  /* ── Shadows ── */
+  --shadow-md: 0 6px 20px color-mix(in srgb, var(--color-shadow) 30%, transparent);
+  --shadow-lg: 0 24px 60px color-mix(in srgb, var(--color-shadow) 30%, transparent);
+  --shadow-dialog: 0 20px 60px color-mix(in srgb, var(--color-shadow) 25%, transparent);
+  --shadow-toolbar: 0 1px 2px color-mix(in srgb, var(--color-shadow) 8%, transparent), 0 6px 20px color-mix(in srgb, var(--color-shadow) 12%, transparent);
+  --shadow-device: inset 0 0 0 1px color-mix(in srgb, var(--color-on-shadow) 8%, transparent), 0 24px 60px color-mix(in srgb, var(--color-shadow) 35%, transparent);
+
+  color-scheme: light;
+}
