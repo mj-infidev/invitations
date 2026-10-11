@@ -3,7 +3,7 @@
   scrolls and its animation follows the scroll (resources/js/viewer/templates/
   tamil-hindu-wedding). The markup here is each scene's finished state, so with
   reduced motion, or before the script loads, everything is simply shown.
-  All artwork is placeholder shapes until the real layered art arrives.
+  Each scene is one full-screen picture (public/scenes/tamil-hindu-wedding).
 --}}
 @extends('invitations.layout')
 

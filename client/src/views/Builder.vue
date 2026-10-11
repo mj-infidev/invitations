@@ -104,12 +104,11 @@
       </form>
 
       <aside v-if="!isPhone" class="builder__preview" aria-label="Preview">
-        <PhonePreview :url="invitation.preview_url" :reload-key="reloadKey" :max-height="previewMaxHeight" />
-        <a :href="invitation.preview_url" target="_blank" rel="noopener" class="hint">Open the preview full size</a>
+        <DevicePreview :url="invitation.preview_url" :reload-key="reloadKey" :max-height="previewMaxHeight" />
       </aside>
 
       <div v-if="isPhone && tab === 'preview'" class="builder__preview builder__preview--tab">
-        <PhonePreview :url="invitation.preview_url" :max-height="previewMaxHeight" />
+        <DevicePreview :url="invitation.preview_url" :max-height="previewMaxHeight" />
       </div>
     </div>
   </div>
@@ -121,7 +120,7 @@ import { onBeforeRouteLeave, useRoute, useRouter } from 'vue-router'
 import FormSection from '@shared/components/FormSection.vue'
 import TemplateFields from '@shared/components/TemplateFields.vue'
 import { inputId, setPath } from '@shared/lib/templateData'
-import PhonePreview from '@shared/components/PhonePreview.vue'
+import DevicePreview from '@shared/components/DevicePreview.vue'
 import PhotoManager from '../components/PhotoManager.vue'
 import { api } from '../lib/api'
 import { useAutosave } from '../composables/useAutosave'
@@ -151,7 +150,8 @@ const tab = ref('details')
 const openSection = ref(null)
 const reloadKey = ref(0)
 // Room left for the preview under the page header (and, on phones, the tabs).
-const availableHeight = () => window.innerHeight - (window.matchMedia(PHONE).matches ? 190 : 140)
+// The frame's share of the window: less the page header and the preview's toolbar.
+const availableHeight = () => window.innerHeight - (window.matchMedia(PHONE).matches ? 250 : 200)
 const previewMaxHeight = ref(availableHeight())
 
 const languages = computed(() => {

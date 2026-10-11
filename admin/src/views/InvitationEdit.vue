@@ -63,7 +63,7 @@
         </form>
 
         <aside class="side stack">
-          <PhonePreview :url="invitation.preview_url" :reload-key="reloadKey" :max-height="620" />
+          <DevicePreview :url="invitation.preview_url" :reload-key="reloadKey" :max-height="620" />
 
           <section class="card">
             <h2>Orders</h2>
@@ -162,7 +162,7 @@
 import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import FormSection from '@shared/components/FormSection.vue'
-import PhonePreview from '@shared/components/PhonePreview.vue'
+import DevicePreview from '@shared/components/DevicePreview.vue'
 import TemplateFields from '@shared/components/TemplateFields.vue'
 import { setPath } from '@shared/lib/templateData'
 import HistoryList from '../components/HistoryList.vue'

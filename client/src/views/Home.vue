@@ -43,7 +43,7 @@
       </div>
     </section>
 
-    <!-- The demo, in a phone -->
+    <!-- The demo, in a phone or a desktop window; on phones, a button that opens it -->
     <section id="demo" ref="demoSection" class="demo section">
       <picture class="demo__photo">
         <img :src="photos.mandapam1448" :srcset="`${photos.mandapam800} 800w, ${photos.mandapam1448} 1448w`" sizes="100vw" alt="" loading="lazy" />
@@ -53,15 +53,22 @@
       <div class="demo__text">
         <p class="eyebrow" data-reveal>The invitation</p>
         <h2 data-reveal><span class="line">Seven scenes.</span> <span class="line">One scroll.</span></h2>
-        <p data-reveal>From the temple gopuram to the garland exchange, every detail unfolds as your guests scroll.</p>
-        <a v-if="demoUrl" :href="demoUrl" target="_blank" rel="noopener" class="btn btn--ghost" data-reveal>Open the full demo</a>
+        <p data-reveal>From the temple at sunset to the final welcome, every detail unfolds as your guests scroll.</p>
       </div>
 
-      <div class="demo__phone" data-reveal>
+      <div class="demo__phone" data-reveal :style="{ '--frame-h': `${demoFrameHeight}px` }">
         <!-- Loaded only when the section comes near: the invitation is a page of its own. -->
-        <PhonePreview v-if="demoUrl && showDemo" :url="demoUrl" :max-height="640" />
+        <DevicePreview
+          v-if="demoUrl && showDemo"
+          v-model:device="demoDevice"
+          :url="demoUrl"
+          :max-height="demoFrameHeight"
+          :label="template?.name ?? 'Tamil Hindu wedding'"
+          :button-below="768"
+          button-label="Open the full demo"
+        />
         <div v-else class="demo__placeholder" />
-        <p class="demo__hint">Scroll inside the phone</p>
+        <p class="demo__hint">{{ demoDevice === 'desktop' ? 'Scroll inside the window' : 'Scroll inside the phone' }}</p>
       </div>
     </section>
 
@@ -102,7 +109,7 @@ import '@fontsource/cormorant-garamond/600.css'
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import PhonePreview from '@shared/components/PhonePreview.vue'
+import DevicePreview from '@shared/components/DevicePreview.vue'
 import { api } from '../lib/api'
 import heroDesktop960 from '../assets/home/hero-desktop-960.webp'
 import heroDesktop1672 from '../assets/home/hero-desktop-1672.webp'
@@ -127,6 +134,12 @@ const root = ref(null)
 const demoSection = ref(null)
 const template = ref(null)
 const showDemo = ref(false)
+const demoDevice = ref('phone')
+// The phone and the window share one height: 640 px, or less on short screens
+// (a 720p laptop), so the whole frame stays in view.
+const frameHeightFor = () => Math.round(Math.min(640, Math.max(420, window.innerHeight - 160)))
+const demoFrameHeight = ref(frameHeightFor())
+const onResize = () => { demoFrameHeight.value = frameHeightFor() }
 const year = new Date().getFullYear()
 
 const createLink = computed(() => ({ name: 'create', query: { template: template.value?.slug ?? 'tamil-hindu-wedding' } }))
@@ -158,6 +171,8 @@ onMounted(async () => {
     })
   })
 
+  window.addEventListener('resize', onResize, { passive: true })
+
   // The demo invitation loads only when its section is a screen away.
   observer = new IntersectionObserver(([entry]) => {
     if (entry.isIntersecting) {
@@ -175,6 +190,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('resize', onResize)
   mm?.revert()
   observer?.disconnect()
 })
@@ -190,6 +206,8 @@ onBeforeUnmount(() => {
   --ivory: #f6eee0;
   --ivory-dim: rgb(246 238 224 / 0.72);
   --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --column: 1200px;
+  --gutter: clamp(20px, 6vw, 96px);
 
   background: var(--maroon-900);
   color: var(--ivory);
@@ -214,7 +232,11 @@ h2 {
   text-transform: uppercase;
 }
 
-.section { padding: clamp(88px, 13vw, 168px) clamp(20px, 6vw, 96px); }
+/* Photos run edge to edge; the content keeps to a centred column of at most --column. */
+.section {
+  padding-block: clamp(88px, 13vw, 168px);
+  padding-inline: max(var(--gutter), (100% - var(--column)) / 2);
+}
 
 /* ── Buttons ─────────────────────────────────────────────── */
 
@@ -270,10 +292,12 @@ h2 {
     linear-gradient(0deg, rgb(20 3 6 / 0.6) 0%, rgb(20 3 6 / 0) 30%);
 }
 
+/* The words start where the column below does. */
 .hero__content {
   position: relative;
-  max-width: 1000px;
-  padding: 120px clamp(20px, 6vw, 96px) 80px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 120px max(var(--gutter), (100% - var(--column)) / 2) 80px;
 }
 
 .hero h1 {
@@ -333,7 +357,9 @@ h2 {
 
 /* ── Demo ─────────────────────────────────────────────────── */
 
+/* Wider than the page's column: the preview takes the room the other sections leave empty. */
 .demo {
+  --column: 1600px;
   position: relative;
   display: grid;
   gap: clamp(48px, 7vw, 96px);
@@ -364,11 +390,13 @@ h2 {
   flex-direction: column;
   align-items: center;
   gap: 14px;
-  width: min(100%, 340px);
-  justify-self: center;
+  width: 100%;
 }
 
-.demo__placeholder { width: 100%; aspect-ratio: 390 / 844; border-radius: 24px; background: rgb(0 0 0 / 0.35); }
+.demo__placeholder { height: var(--frame-h, 640px); max-width: 100%; aspect-ratio: 390 / 844; border-radius: 34px; background: rgb(0 0 0 / 0.35); }
+
+/* The narrow-window button, in the page's gold. */
+.demo__phone { --preview-button-bg: var(--gold); --preview-button-ink: var(--maroon-950); }
 .demo__hint { margin: 0; color: var(--ivory-dim); font-size: 0.85rem; letter-spacing: 0.08em; }
 
 /* ── Price ────────────────────────────────────────────────── */
@@ -430,8 +458,15 @@ h2 {
 @media (min-width: 900px) {
   .hero h1 .line { white-space: nowrap; }
   .steps { grid-template-columns: 5fr 7fr; }
-  .demo { grid-template-columns: 1fr auto; }
-  .demo__phone { width: 340px; }
+  /* The words on the left, the preview in all the width left over. The preview's
+     column has a set width and height whichever device shows, and the toolbar is
+     centred over it, so switching between phone and window changes nothing around it. */
+  .demo {
+    grid-template-columns: minmax(0, clamp(300px, 30vw, 460px)) minmax(0, 1fr);
+    column-gap: clamp(48px, 6vw, 112px);
+  }
+  /* Toolbar, frame and hint. */
+  .demo__phone { min-height: calc(var(--frame-h) + 100px); }
 }
 
 /* ── Phones ───────────────────────────────────────────────── */
@@ -449,5 +484,11 @@ h2 {
   .buttons .btn { flex: 1 1 100%; }
   .steps__photo img { aspect-ratio: 4 / 3; }
   .demo__shade { background: rgb(20 3 6 / 0.8); }
+
+  /* Phones get only the button that opens the demo. */
+  .demo__placeholder,
+  .demo__hint { display: none; }
+  .demo__phone { justify-self: start; width: auto; }
+  .demo { row-gap: 0; }
 }
 </style>

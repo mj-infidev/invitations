@@ -41,7 +41,7 @@ invitations/
 | Need | Tool |
 | --- | --- |
 | Scroll-driven scenes | GSAP with its ScrollTrigger plugin |
-| Small looping animations | Lottie (`lottie-web`) |
+| Small looping animations | Lottie (`lottie-web`); supported by the viewer, unused by the current template |
 | Google sign-in | Laravel Socialite |
 | Session cookies for the Vue apps | Laravel Sanctum (SPA mode) |
 | Payments | Razorpay REST API through Laravel's `Http` client, no SDK (as in nancofills) |
@@ -222,7 +222,7 @@ Relations: a user has many invitations and orders; an invitation belongs to one 
 
 **Kept outside `data`:** photos are rows in `invitation_media` (at most `templates.max_photos`), and the language shown to guests is the `invitations.language` column.
 
-**Reserved key `avatar`:** the cartoon couple of the closing scene. It is not a form field: the builder must keep it untouched when saving, and a later couple customizer will edit it. Values are option names, never colours; `App\Support\Avatar` lists the options and maps them to colours, and anything missing or unknown falls back to the default.
+**Reserved key `avatar`:** kept for a later couple customizer; since the design pass (Step 7) no scene draws it. It is not a form field: the builder must keep it untouched when saving, and a later couple customizer will edit it. Values are option names, never colours; `App\Support\Avatar` lists the options and maps them to colours, and anything missing or unknown falls back to the default.
 
 ```json
 "avatar": {
@@ -301,32 +301,31 @@ The Blade page contains:
 
 ## Animation template: Tamil Hindu wedding
 
-The invitation is seven full-screen scenes. Each scene is pinned while the guest scrolls, and the scroll position plays its animation; then the next scene takes over. The scene list is a first proposal to adjust.
+The invitation is seven full-screen scenes. Each is one full-screen picture under a dark gradient, with a headline and a line or two in a centred column; the scroll position plays it, and the next scene cross-fades in over it.
 
 | # | Scene | What the guest sees | Data shown |
 | --- | --- | --- | --- |
-| 1 | Opening | Pillaiyar suzhi (உ) at the top, a kuthuvilakku lamp lights, the temple gopuram rises in layers | None |
-| 2 | The couple | Thoranam and banana trees frame the entrance; the names fade in | Bride and groom names |
-| 3 | Families | A kolam draws itself line by line around the text | Parents' names, family message |
-| 4 | Muhurtham | Date and time appear with a countdown | Date, time, optional Tamil calendar date |
-| 5 | Venue | The mandapam slides in with an "Open in Maps" button | Venue, address, map link, other events |
-| 6 | Photos | The couple's photos arrive one by one in frames | Uploaded photos |
-| 7 | Welcome | A cartoon couple exchange garlands and fold hands | Closing line, "made with" brand link |
+| 1 | Opening | The temple gopuram at sunset; "Wedding invitation" (with உ above it in the Tamil view) | None |
+| 2 | The couple | The decorated entrance; the names in script | Bride and groom names |
+| 3 | Families | A kolam with lamps | Parents' names, family message |
+| 4 | Muhurtham | Temple bell at dusk; date, time and a countdown | Date, time, optional Tamil calendar date |
+| 5 | Venue | The mandapam; an "Open in Maps" button, then the other events take the venue's place | Venue, address, map link, other events |
+| 6 | Photos | Silk and jasmine; the couple's photos one by one in thin gold frames | Uploaded photos |
+| 7 | Welcome | The lit steps; the first photo in a round gold frame, the names, the closing line | First photo, names, closing line, "made with" brand link |
 
 **How it is built**
 
-- One GSAP timeline per scene, tied to scroll with ScrollTrigger (`pin: true`, `scrub: true`).
-- Artwork is drawn in separate layers (sky, gopuram, pillars, foreground) and each layer moves at a different speed for depth.
-- Small loops such as the lamp flame and swinging garlands are Lottie files.
+- One GSAP timeline per scene, tied to scroll with ScrollTrigger (`scrub: 0.5`). Each scene's stage is fixed to the screen and its section is only scroll room, so scenes cross-fade instead of sliding.
+- In each scene: the picture zooms slowly, the text rises and fades in, holds, and fades out before the next scene.
 - Animate only position, scale, rotation, and opacity. Other properties stutter on budget phones.
-- Artwork is SVG where possible, otherwise WebP. Each scene loads its images as the guest gets near it.
+- Pictures are WebP. Each scene loads its picture as the guest gets near it (a screen and a half before).
 - Guests who have "reduce motion" turned on get simple fades with no pinning.
 - Background music is optional and starts only when the guest taps a button, because browsers block sound that plays by itself.
 - Design for a phone held upright first, then widen for tablets and desktops.
 
 **Artwork**
 
-The code is the smaller half; the look depends on the illustrations. Build with simple placeholder shapes first so coding can go ahead, then swap in the real layered artwork. Who draws it is an open decision below.
+One picture per scene, in two shapes: portrait for phones and landscape for wide screens. The source PNGs are in `art/scenes/{template-slug}/phone/` and `/desktop/` (not in git); `node scripts/scene-art.mjs {template-slug}` in `api/` converts them to WebP in `api/public/scenes/{template-slug}/`, which is in git. The page finds a scene's pictures by the invitation's template slug, so a new template needs only its pictures, no code. A scene without a landscape picture uses the portrait one everywhere.
 
 ## Tamil language support
 
@@ -464,6 +463,18 @@ Nine steps, one per coding session. The animated page comes second, before login
 - The invitation edit screen reuses the builder's shared form (`TemplateFields`, `FormSection`, and now `PhonePreview`), saves with an explicit Save that lists every change, and logs each changed field. Admins can edit in any status; customers stop at the event date. Disabling, enabling and removing a photo need a reason.
 - Searching invitations covers the title (English names), link and customer; Tamil names aren't searchable yet, because `data` stores them escaped.
 
+**Settled in Step 7 (design pass, viewer and home page)**
+
+- Every drawn shape is gone from the invitation: gopuram, lamp, kolam, thoranam, banana trees, bells, the cartoon couple and the two Lottie loops. Each scene is one photograph-style picture under a dark gradient (see Artwork).
+- Type: headlines and lines in Cormorant Garamond, set large; the couple's names in Great Vibes. Colours follow the home page: deep maroon, gold, ivory.
+- Motion: every scene's stage is fixed to the screen and fades in over the one before (no pinning); its picture zooms slowly (scale 1 to 1.12) while it shows; its text rises in, holds, and fades out before the next. Only opacity and transforms animate. With reduced motion, or if the viewer script fails to start, the scenes are simply shown one after another.
+- Covered scenes are hidden, and a picture is rendered (so loaded) only from a screen and a half before its scene, so a phone holds one or two pictures at a time. Measured on a phone-sized window with the CPU slowed 4×: frames at 16.7 ms median, 17 ms at the 99th percentile, no long tasks.
+- Photos scene: every uploaded photo in a thin gold frame, 4:5. Welcome scene: the first photo in a round gold frame. The demo and draft previews show empty frames when there are no photos.
+- The family message stays in the families scene, as a small italic line under the parents.
+- New words on the page: "You are warmly invited to share our joy", "are getting married", "&" between the names (Tamil: மற்றும்), "Your photo". Their Tamil goes into the Step 8 review.
+- Previews in the builder, the admin edit screen and the home page demo use `shared/components/DevicePreview.vue` (it replaced `PhonePreview`): a toolbar to switch between a phone (390 × 844) and a desktop window (1440 × 900), reload, and open full screen. On the home page, phones get only a button that opens the demo. Inside a preview frame the invitation hides its scrollbar.
+- Home page: content keeps to a centred column of at most 1200 px; the demo's text and preview sit together as one centred group, with the text above when the desktop window is shown.
+
 **First message to give Claude in the IDE**
 
 Save this document as `PLAN.md` in the project's root folder, then send:
@@ -483,7 +494,7 @@ None of these block Step 1. The first three are needed before Step 2 goes live o
 - [ ] **Hosting.** Can our server send `/i/` and `/api/` to Laravel on the main domain? If not, invitation links would sit on a subdomain.
 - [ ] **Domain and brand name.** The name appears at the bottom of every invitation.
 - [x] **Versions.** Same as nancofills: Laravel 12 with Sanctum 4 on PHP 8.2; Vue 3.5, Vite 8, vue-router 4, Pinia 4.
-- [ ] **Artwork.** Who draws the layered temple, mandapam, and couple illustrations.
+- [x] **Artwork.** Scene pictures for the Tamil Hindu wedding are in `art/scenes/tamil-hindu-wedding` (see Settled in Step 7).
 - [ ] **Price.** What one invitation costs.
 - [ ] **Photos.** How many photos a customer can upload.
 - [ ] **Retention.** How long after the event an invitation stays live.

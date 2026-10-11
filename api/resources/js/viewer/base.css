@@ -47,6 +47,10 @@ body {
 
 p, h1, h2, h3, figure { margin: 0; }
 
+/* Shown in a preview frame: scrolls without a scrollbar, as on a phone. */
+.framed { scrollbar-width: none; }
+.framed::-webkit-scrollbar { display: none; }
+
 /* Tamil runs longer and stacks vowel signs above and below: more line height. */
 :lang(ta) {
     font-family: var(--font-tamil-body);
@@ -69,26 +73,56 @@ svg { display: block; }
     align-items: center;
     justify-content: center;
     gap: 16px;
-    padding: max(28px, env(safe-area-inset-top)) var(--gutter) max(28px, env(safe-area-inset-bottom));
+    padding: max(48px, env(safe-area-inset-top)) var(--gutter) max(48px, env(safe-area-inset-bottom));
+    background: var(--maroon-deep);
 }
 
-/* Pinned and played by scroll: exactly one screen tall. */
+/*
+ * Played by scroll (core.js): every stage is fixed to the screen, later scenes
+ * above earlier ones, and fades in over the one before; hidden until then. The
+ * section is only scroll room, --length % of the screen height. The last one
+ * also has the screen it stays on.
+ */
+.motion .scene { height: calc(var(--length, 150) * 1vh); }
+.motion .scene:last-child { height: calc((var(--length, 150) + 100) * 1vh); }
+
 .motion .scene__stage {
-    height: 100vh;
-    height: 100svh;
+    position: fixed;
+    inset: 0;
+    min-height: 0;
 }
 
-.layer {
+.motion .scene:not(:first-child) .scene__stage {
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* The full-screen picture and the gradient that keeps text readable over it. */
+.scene__art,
+.scene__art img,
+.scene__shade {
     position: absolute;
     inset: 0;
-    pointer-events: none;
+    width: 100%;
+    height: 100%;
 }
+
+.scene__art img {
+    display: block;
+    object-fit: cover;
+}
+
+/* A picture is rendered, so loaded (it is lazy), only once core.js finds its
+   scene near; the first is needed at once. */
+.motion .scene:not(:first-child):not(.is-near) .scene__art { display: none; }
+.motion .scene.is-near .scene__art img,
+.motion .scene:first-child .scene__art img { will-change: transform; }
 
 .scene__content {
     position: relative;
     z-index: 2;
     width: 100%;
-    max-width: 34rem;
+    max-width: 36rem;
     text-align: center;
 }
 

@@ -1,13 +1,16 @@
+import { riseIn, riseOut } from '../../../core'
+
 /**
- * 5 · Venue. The mandapam slides in with the venue details; if there are other
- * events, the mandapam then steps aside and they take its place.
+ * 5 · Venue. The name, address and map button rise in; if there are other
+ * events, they then take the venue's place.
  */
 export default function venue(tl, q) {
-  tl.from(q('.venue__mandapam'), { xPercent: 80, opacity: 0, duration: 0.6 }, 0)
-    .from(q('.venue__info > *'), { y: 24, opacity: 0, duration: 0.35, stagger: 0.12 }, 0.3)
-
-  if (q('.venue__events').length) {
-    tl.to(q('.venue__mandapam'), { xPercent: -60, opacity: 0, duration: 0.4 }, '+=0.3')
-      .from(q('.venue__events > *'), { y: 30, opacity: 0, duration: 0.3, stagger: 0.1 }, '<0.15')
+  riseIn(tl, q('.venue__info .rise'))
+  if (!q('.venue__events').length) {
+    riseOut(tl, q('.venue__info'))
+    return
   }
+  riseOut(tl, q('.venue__info'), 4.6)
+  riseIn(tl, q('.event-in'), 5.6, 0.35)
+  riseOut(tl, q('.venue__events'))
 }

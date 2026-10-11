@@ -5,6 +5,10 @@
 return [
     'wedding_invitation' => 'Wedding invitation',
     'scroll_hint' => 'Scroll down',
+    'opening_line' => 'You are warmly invited to share our joy',
+    'and' => '&',
+    'getting_married' => 'are getting married',
+    'your_photo' => 'Your photo',
     'bride' => 'Bride',
     'groom' => 'Groom',
     'with_blessings' => 'With the blessings of our families',

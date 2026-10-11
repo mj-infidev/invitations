@@ -21,10 +21,16 @@
     @yield('head')
 
     {{-- Before first paint, so the page never lays out twice: .motion turns on the
-         pinned, scroll-played layout; without it (reduce motion, or no JS) every
-         scene is simply shown in its finished state. --}}
+         stacked, scroll-played layout; without it (reduce motion, or no JS) every
+         scene is simply shown in its finished state, one after another. If the
+         viewer script failed, the page has loaded without it: back to that. --}}
     <script>
         if (window.matchMedia('(prefers-reduced-motion: no-preference)').matches) document.documentElement.classList.add('motion')
+        // In a preview frame (builder, home page demo): no scrollbar eating into the screen.
+        if (window.self !== window.top) document.documentElement.classList.add('framed')
+        window.addEventListener('load', function () {
+            if (!document.documentElement.classList.contains('viewer-ready')) document.documentElement.classList.remove('motion')
+        })
     </script>
 
     @vite($page->viewerEntry())

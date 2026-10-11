@@ -1,656 +1,371 @@
 /*
- * Tamil Hindu wedding. Placeholder art: every shape here is swapped for the
- * real layered artwork later; the class names and layers stay.
- * Sizes use min(vw, svh) so the art fits a phone held upright and still
- * scales up on tablets and desktops.
+ * Tamil Hindu wedding. Each scene is one full-screen picture (public/scenes/
+ * tamil-hindu-wedding) under a dark gradient, with a headline and a line or two
+ * in a centred column: Cormorant Garamond, the couple's names in Great Vibes.
+ * The look follows the home page: deep maroon, gold, ivory.
  */
 
-.scene--opening .couple__name,
-.couple__name,
-.venue__name,
-.welcome__names,
-.families__names {
-    text-wrap: balance;
-    overflow-wrap: break-word;
+.scene {
+    --ivory: #f6eee0;
+    --ivory-dim: rgb(246 238 224 / 0.82);
+    --gold: #d4a84f;
+    --gold-light: #ecd08f;
+    --shadow: 0 2px 18px rgb(10 2 4 / 0.55);
 }
 
-.couple__name :lang(ta),
-.venue__name :lang(ta),
-.welcome__names:lang(ta),
-.opening__title :lang(ta) {
-    font-family: var(--font-tamil-heading);
+/* Darker at the top and bottom, and behind the centred words; the warm light
+   of the picture stays in between. */
+.scene__shade {
+    background:
+        radial-gradient(ellipse 85% 48% at 50% 50%, rgb(14 3 6 / 0.62) 0%, rgb(14 3 6 / 0.28) 62%, rgb(14 3 6 / 0) 100%),
+        linear-gradient(180deg, rgb(14 3 6 / 0.62) 0%, rgb(14 3 6 / 0.12) 28%, rgb(14 3 6 / 0.12) 64%, rgb(14 3 6 / 0.78) 100%);
+}
+
+.scene__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(14px, 2.4svh, 22px);
+    color: var(--ivory);
+    text-shadow: var(--shadow);
+}
+
+/* ── Type ───────────────────────────────────────────────────── */
+
+.headline {
+    font-family: var(--font-en);
+    font-weight: 500;
+    font-size: clamp(2.7rem, 11vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+}
+
+.headline--medium { font-size: clamp(2.2rem, 8.6vw, 4rem); line-height: 1.1; }
+.headline--small { font-size: clamp(1.7rem, 6.4vw, 2.4rem); line-height: 1.15; }
+
+.lede {
+    max-width: 26em;
+    font-family: var(--font-en);
+    font-style: italic;
+    font-size: clamp(1.2rem, 4.8vw, 1.55rem);
+    line-height: 1.45;
+    color: var(--ivory-dim);
+    text-wrap: balance;
+}
+
+.scene .eyebrow {
+    font-size: 0.78rem;
+    letter-spacing: 0.32em;
+    color: var(--gold-light);
+}
+
+/* Tamil: no italics (Tamil has none), the heading font for headlines, more room for vowel signs. */
+.headline:lang(ta), .headline :lang(ta) { font-family: var(--font-tamil-heading); line-height: 1.45; letter-spacing: 0; }
+.lede:lang(ta), .lede :lang(ta) { font-style: normal; line-height: 1.6; }
+
+.scene .button {
+    margin-top: 6px;
+    background: var(--gold);
+    color: #1f0509;
+    text-shadow: none;
+    box-shadow: 0 6px 20px rgb(10 2 4 / 0.35);
 }
 
 /* ── 1 · Opening ────────────────────────────────────────────── */
 
-.scene--opening .scene__stage {
-    justify-content: flex-start;
-    background: linear-gradient(#12030a, #2e0711 55%, #4a0d1c);
-}
+.scene--opening .scene__art img { object-position: center 30%; }
 
-.opening__dawn {
-    background: linear-gradient(#6d1a2a 0%, #b5432f 30%, #e98a3f 55%, #f6c177 80%);
-}
+/* The words sit low, over the dark floor; the gopuram stays clear above. */
+.scene--opening .scene__stage { justify-content: flex-end; padding-bottom: max(16svh, 110px); }
 
-.opening__sun {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 30svh;
-    width: min(56vw, 34svh);
-    aspect-ratio: 1;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: radial-gradient(circle, #fff1b8 0%, #f9c851 45%, rgb(249 200 81 / 0) 70%);
-}
-
-.opening__gopuram {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 11svh;
-    width: min(84vw, 50svh);
-    height: auto;
-    margin: 0 auto;
-}
-
-.opening__ground {
-    top: auto;
-    height: 13svh;
-    background: linear-gradient(#6b3014, #2a1006);
+.scene--opening .scene__shade {
+    background: linear-gradient(0deg, rgb(14 3 6 / 0.94) 0%, rgb(14 3 6 / 0.72) 34%, rgb(14 3 6 / 0.08) 62%, rgb(14 3 6 / 0.3) 100%);
 }
 
 .opening__suzhi {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: max(4svh, env(safe-area-inset-top));
-    text-align: center;
     font-family: var(--font-tamil-heading);
-    font-size: clamp(2.6rem, 8svh, 5rem);
+    font-size: clamp(1.8rem, 6vw, 2.4rem);
     line-height: 1.2;
     color: var(--gold);
-    text-shadow: 0 0 18px rgb(246 210 122 / 0.6);
 }
 
-.opening__title {
-    margin-top: calc(max(4svh, env(safe-area-inset-top)) + clamp(3.5rem, 11svh, 6.5rem));
-    font-size: clamp(1.25rem, 5.5vw, 2rem);
-    color: var(--gold-light);
-    text-shadow: 0 2px 8px rgb(0 0 0 / 0.5);
-}
-
-.lamp {
-    position: absolute;
-    z-index: 2;
-    left: 0;
-    right: 0;
-    bottom: 3svh;
-    width: min(22vw, 13svh);
-    aspect-ratio: 120 / 220;
-    margin: 0 auto;
-}
-
-.lamp__body { width: 100%; height: 100%; overflow: visible; }
-
-/* Above the lamp, in the empty night sky, not on its base. */
-.motion .scene--opening .scroll-hint { bottom: 31svh; }
-
-/* A flame on each outer wick of the bowl (x 18 and 102 of 120, y 48 of 220). */
-.lamp__flame {
-    position: absolute;
-    top: 8%;
-    width: 16%;
-    aspect-ratio: 40 / 64;
-}
-
-.lamp__flame--left { left: 7%; }
-.lamp__flame--right { left: 77%; }
-
-.lamp__glow {
-    position: absolute;
-    left: -60%;
-    top: -55%;
-    width: 220%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgb(255 205 100 / 0.55) 0%, rgb(255 205 100 / 0) 60%);
-}
+.motion .scroll-hint { color: var(--gold-light); letter-spacing: 0.12em; }
 
 /* ── 2 · The couple ─────────────────────────────────────────── */
 
-.scene--couple .scene__stage {
-    background: #fff1d6;
-    color: var(--maroon);
-}
-
-.couple__arch {
-    top: 8svh;
-    left: 4vw;
-    right: 4vw;
-    width: auto;
-    height: auto;
-}
-
-.thoranam {
-    position: absolute;
-    z-index: 3;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 13svh;
-}
-
-.banana {
-    position: absolute;
-    z-index: 1;
-    bottom: 0;
-    height: 58svh;
-    width: auto;
-    aspect-ratio: 120 / 400;
-}
-
-.banana--left { left: -9vw; }
-.banana--right { right: -9vw; }
-
-.couple__names {
-    max-width: min(74vw, 30rem);
-    padding-top: 6svh;
-}
-
-.couple__role {
-    font-size: 0.85rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--red);
-}
-
-.couple__role:lang(ta) { letter-spacing: 0.02em; font-size: 0.95rem; }
-
-.couple__heading { font-weight: 400; }
+.couple__names { font-weight: 400; }
 
 .couple__name {
-    --fit: min(74vw, 30rem);
+    --fit: min(84vw, 36rem);
     display: block;
-    color: var(--maroon);
+    color: var(--gold-light);
+    overflow-wrap: break-word;
+    text-wrap: balance;
 }
 
 /* The usual size, or smaller so the longest word fits the width (--longest-ta/en,
    in characters, from the Blade view): about 0.58em a character in Tamil once its
    letters are counted a quarter wider, and 0.46em in the script font. */
 .couple__name [lang="ta"] {
-    font-size: min(clamp(2rem, 10vw, 3.6rem), var(--fit) / (var(--longest-ta, 1) * 0.58));
+    font-family: var(--font-tamil-heading);
+    font-size: min(clamp(2.4rem, 11vw, 4.4rem), var(--fit) / (var(--longest-ta, 1) * 0.58));
     line-height: 1.5;
 }
 
-/* English names in script. Great Vibes draws small for its size, so it is set larger. */
+/* Great Vibes draws small for its size, so it is set large. */
 .couple__name [lang="en"] {
     font-family: var(--font-en-name);
-    font-size: min(clamp(2.6rem, 13vw, 4.6rem), var(--fit) / (var(--longest-en, 1) * 0.46));
-    line-height: 1.25;
-}
-
-.welcome__names[lang="en"] {
-    font-family: var(--font-en-name);
-    font-size: clamp(2rem, 9vw, 3rem);
-    line-height: 1.25;
+    font-size: min(clamp(4rem, 19vw, 7.5rem), var(--fit) / (var(--longest-en, 1) * 0.46));
+    line-height: 1.1;
 }
 
 .couple__and {
     display: block;
-    margin: 0.3em 0;
-    color: var(--gold);
+    margin: 0.1em 0;
+    font-family: var(--font-en);
+    font-style: italic;
+    font-size: clamp(2.1rem, 8vw, 3rem);
+    line-height: 1;
+    color: var(--ivory-dim);
 }
 
-.couple__and .ornament {
-    width: clamp(3rem, 14vw, 4.5rem);
-    height: auto;
-    margin: 0 auto;
-}
-
-.ornament { fill: var(--gold); }
-
-.welcome__names .ornament {
-    display: inline-block;
-    width: 1.4em;
-    height: auto;
-    margin: 0 0.15em;
-    vertical-align: middle;
-}
+.couple__and :lang(ta) { font-style: normal; font-size: 0.6em; }
 
 /* ── 3 · Families ───────────────────────────────────────────── */
 
-.scene--families .scene__stage {
-    background: radial-gradient(ellipse at center, #8c1d3a 0%, #5b0f1f 70%);
-}
-
-.kolam {
-    position: absolute;
-    left: 0;
-    right: 0;
-    width: min(44vw, 22svh);
-    height: auto;
-    margin: 0 auto;
-    overflow: visible;
-}
-
-.kolam--top { top: max(3svh, env(safe-area-inset-top)); }
-.kolam--bottom { bottom: max(3svh, env(safe-area-inset-bottom)); }
-
-.kolam__dot { fill: #fff6e3; }
-
-.kolam__line {
-    fill: none;
-    stroke: #fff6e3;
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.85;
-}
-
-.families {
-    display: flex;
-    flex-direction: column;
-    gap: 2.2svh;
-    max-width: 28rem;
-}
-
-.families__heading {
-    font-size: 1rem;
-    color: var(--gold);
-}
-
-.families__label {
-    font-size: 0.85rem;
-    color: var(--gold-light);
-}
-
-.families__names {
-    font-size: clamp(1.1rem, 4.6vw, 1.5rem);
-}
-
-.families__message {
-    font-style: italic;
-    font-size: 0.95rem;
-    opacity: 0.9;
-}
-
-.families__message :lang(ta) { font-style: normal; }
-
-/* ── 4 · Muhurtham ──────────────────────────────────────────── */
-
-.scene--muhurtham .scene__stage {
-    background: linear-gradient(#5b0f1f, #3a0814);
-}
-
-/* An absolutely placed <svg> keeps its own size instead of stretching to its insets: size it. */
-.muhurtham__frame {
-    --frame-x: 4vw;
-    --frame-y: max(3svh, env(safe-area-inset-top));
-    top: var(--frame-y);
-    left: var(--frame-x);
-    width: calc(100% - 2 * var(--frame-x));
-    height: calc(100% - 2 * var(--frame-y));
-}
-
-.muhurtham__frame rect {
-    fill: none;
-    stroke: var(--gold);
-    stroke-width: 1.5;
-}
-
-.bell {
-    position: absolute;
-    top: max(3svh, env(safe-area-inset-top));
-    width: min(10vw, 6svh);
-    height: auto;
-}
-
-.bell--left { left: 13vw; }
-.bell--right { right: 13vw; }
-
-.muhurtham {
+.families__side {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.6svh;
+    gap: 4px;
 }
 
-.muhurtham__date {
-    font-family: var(--font-en);
-    font-size: clamp(1.4rem, 6vw, 2.2rem);
+.families__names {
+    font-size: clamp(1.3rem, 5.4vw, 1.75rem);
     line-height: 1.3;
+    text-wrap: balance;
 }
 
-.muhurtham__time {
-    font-size: clamp(1.1rem, 4.8vw, 1.6rem);
-    color: var(--gold-light);
+.families__message {
+    max-width: 24em;
+    font-style: italic;
+    font-size: clamp(1.05rem, 4.2vw, 1.25rem);
+    color: var(--ivory-dim);
 }
 
-.muhurtham__tamil {
-    font-size: 1.05rem;
-    color: var(--gold-light);
-}
+.families__message:lang(ta), .families__message :lang(ta) { font-style: normal; }
 
-.countdown { margin-top: 2svh; }
+/* ── 4 · Muhurtham ──────────────────────────────────────────── */
+
+.countdown { margin-top: 1svh; }
 
 .countdown__units {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(4, auto);
+    justify-content: center;
 }
 
+/* Thin gold rules between the numbers. */
 .countdown__unit {
-    min-width: 64px;
-    padding: 10px 6px;
-    border: 1.5px solid var(--gold);
-    border-radius: 10px;
-    background: rgb(0 0 0 / 0.18);
+    min-width: 4.4rem;
+    padding: 2px 14px;
+    border-left: 1px solid rgb(212 168 79 / 0.55);
 }
+
+.countdown__unit:first-child { border-left: 0; }
 
 .countdown__value {
     display: block;
     font-family: var(--font-en);
-    font-size: clamp(1.4rem, 7vw, 2rem);
-    font-variant-numeric: tabular-nums;
-    line-height: 1.2;
+    font-size: clamp(1.9rem, 8vw, 2.6rem);
+    font-variant-numeric: tabular-nums lining-nums;
+    line-height: 1.1;
 }
 
-.countdown__label { font-size: 0.7rem; color: var(--gold-light); }
+.countdown__label {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold-light);
+}
 
-.countdown__done { display: none; font-size: 1.2rem; color: var(--gold-light); }
+.countdown__label:lang(ta) { letter-spacing: 0; font-size: 0.8rem; text-transform: none; }
+
+.countdown__done { display: none; font-size: 1.3rem; color: var(--gold-light); }
 .countdown.is-done .countdown__units { display: none; }
 .countdown.is-done .countdown__done { display: block; }
 
 /* ── 5 · Venue ──────────────────────────────────────────────── */
 
-.scene--venue .scene__stage {
-    justify-content: flex-start;
-    background: linear-gradient(#2b0a14, #5b0f1f 70%, #6d1a2a);
-}
+.venue__address { white-space: pre-line; }
 
-.venue__mandapam {
-    position: relative;
-    flex: none;
-    width: min(88vw, 60svh);
-    aspect-ratio: 300 / 240;
-}
+.venue__events { gap: clamp(18px, 3svh, 30px); }
 
-.venue__mandapam > svg { width: 100%; height: 100%; }
-
-/* Hung from the beam between the pillars (x 75 and 225 of 300, y 98 of 240). */
-.hanging {
-    position: absolute;
-    top: 40.8%;
-    width: 6%;
-    aspect-ratio: 24 / 100;
-}
-
-.hanging--left { left: 22%; }
-.hanging--right { left: 72%; }
-
-.venue__info {
+.event {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.4svh;
+    gap: 6px;
 }
 
-.venue__name {
-    font-family: var(--font-en);
-    font-weight: 600;
-    font-size: clamp(1.4rem, 6vw, 2.1rem);
-    line-height: 1.3;
-}
+.event .lede { font-size: clamp(1.1rem, 4.4vw, 1.35rem); }
 
-.venue__address {
-    white-space: pre-line;
-    font-size: 0.95rem;
-    opacity: 0.9;
-}
-
-.venue__events {
-    width: 100%;
-    max-width: 30rem;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    text-align: center;
-    order: 2;
-}
-
-/* Played by scroll: the events take the mandapam's place instead of following it. */
+/* Played by scroll: the events take the venue's place on the same screen. */
 .motion .venue__events {
     position: absolute;
-    z-index: 2;
-    top: max(28px, env(safe-area-inset-top));
+    top: 50%;
     left: 0;
     right: 0;
     margin: 0 auto;
     padding: 0 var(--gutter);
-    max-width: calc(30rem + 2 * var(--gutter));
+    max-width: calc(36rem + 2 * var(--gutter));
+    translate: 0 -50%;
 }
-
-.event {
-    padding: 10px 14px;
-    border: 1px solid rgb(224 169 59 / 0.6);
-    border-radius: 12px;
-    background: rgb(0 0 0 / 0.2);
-}
-
-.event__name { font-size: 1.1rem; color: var(--gold-light); }
-.event__when, .event__place { font-size: 0.85rem; }
 
 /* ── 6 · Photos ─────────────────────────────────────────────── */
 
-.scene--photos .scene__stage {
-    background: #fbf3e4;
-    color: var(--maroon);
-}
-
 .photos {
     /* Frame height: what's left of the screen after the heading, shared by the rows. */
-    --frame-h: min(40svh, (100svh - 14rem) / var(--rows));
-    max-width: 40rem;
+    --frame-h: min(36svh, (100svh - 15rem) / var(--rows));
+    max-width: 60rem;
 }
-
-.photos__heading {
-    margin-bottom: 2.5svh;
-    font-family: var(--font-en);
-    font-weight: 600;
-    font-size: clamp(1.4rem, 6vw, 2rem);
-}
-
-.photos__heading:lang(ta) { font-family: var(--font-tamil-heading); }
 
 .photos__grid {
     display: grid;
     grid-template-columns: repeat(2, auto);
     justify-content: center;
-    gap: 2.4svh 4vw;
+    gap: clamp(12px, 2svh, 22px) clamp(12px, 3vw, 24px);
 }
 
 .photos__grid--one { grid-template-columns: auto; }
+.photos__grid--three { grid-template-columns: repeat(3, auto); }
 
-.photo__frame {
-    width: min(42vw, var(--frame-h) * 0.8);
+/* A thin gold frame with a little dark space inside it. */
+.photo {
+    width: min(40vw, var(--frame-h) * 0.8);
     aspect-ratio: 4 / 5;
-    padding: 6px;
-    background: #fff;
-    border: 2px solid var(--gold);
-    box-shadow: 0 6px 16px rgb(91 15 31 / 0.25);
-    transform: rotate(var(--tilt, 0deg));
+    /* Keeps 4:5 whatever the photo's own shape (object-fit crops it). */
+    min-height: 0;
+    padding: 5px;
+    border: 1px solid rgb(212 168 79 / 0.85);
+    background: rgb(14 3 6 / 0.35);
+    box-shadow: 0 12px 30px rgb(10 2 4 / 0.45);
 }
 
-.photos__grid--one .photo__frame { width: min(70vw, var(--frame-h) * 0.8); }
+.photos__grid--one .photo { width: min(72vw, var(--frame-h) * 0.8); }
+.photos__grid--three .photo { width: min(28vw, var(--frame-h) * 0.8); }
 
-.photo__frame img {
+.photo img {
     display: block;
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.photo__frame--empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    color: #b08a58;
-    font-size: 0.8rem;
-    background: repeating-linear-gradient(45deg, #fff8ea 0 10px, #f8ecd4 10px 20px);
-}
-
-.photo__frame--empty svg {
-    width: 34%;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.5;
+.photo--empty {
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    color: rgb(236 208 143 / 0.75);
+    text-shadow: none;
 }
 
 /* ── 7 · Welcome ────────────────────────────────────────────── */
 
-.scene--welcome .scene__stage {
-    background: linear-gradient(#fde9c8, #f7c98a);
-    color: var(--maroon);
-}
-
-.welcome__halo {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 6svh;
-    width: min(90vw, 56svh);
-    aspect-ratio: 1;
-    margin: 0 auto;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgb(255 250 235 / 0.95) 0%, rgb(255 250 235 / 0) 68%);
-}
-
-.couple-art {
-    position: relative;
-    z-index: 1;
-    width: min(86vw, 52svh);
-    height: auto;
+/* A round gold frame: a fine ring, a dark gap, then the photo. */
+.portrait {
+    /* Both sides set: with aspect-ratio alone, a tall photo stretches the circle. */
+    --size: min(48vw, 26svh);
     flex: none;
+    width: var(--size);
+    height: var(--size);
+    padding: 6px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    background: rgb(14 3 6 / 0.4);
+    box-shadow: 0 0 0 6px rgb(212 168 79 / 0.16), 0 16px 40px rgb(10 2 4 / 0.5);
 }
 
-.couple-art .skin,
-.couple-art .person--bride .skin { fill: var(--bride-skin); }
-.couple-art .person--groom .skin { fill: var(--groom-skin); }
-.couple-art .person--bride .part--hair,
-.couple-art .person--bride .part--hair ellipse { fill: var(--bride-hair); }
-.couple-art .person--groom .part--hair,
-.couple-art .person--groom .mustache { fill: var(--groom-hair); }
-.couple-art .person--bride .outfit { fill: var(--bride-outfit); }
-.couple-art .person--groom .outfit { fill: var(--groom-outfit); }
-.couple-art .outfit--edged { stroke: var(--gold); stroke-width: 3; }
-.couple-art .shirt { fill: #fbf7ee; }
-.couple-art .zari { fill: var(--gold); }
-.couple-art .eye { fill: #2b1a12; }
-.couple-art .smile { fill: none; stroke: #7a2e1e; stroke-width: 2.5; stroke-linecap: round; }
-.couple-art .kumkum { fill: #c0262d; }
-.couple-art .parting { stroke: #c0262d; stroke-width: 2; }
-.couple-art .gold { fill: var(--gold); }
-.couple-art .gold-line { fill: none; stroke: var(--gold); stroke-width: 2.5; }
-.couple-art .gold-line--thick { stroke-width: 4; }
-.couple-art .pendant { fill: #c0262d; stroke: var(--gold); stroke-width: 2; }
-
-.couple-art .braid {
-    fill: none;
-    stroke: var(--bride-hair);
-    stroke-width: 14;
-    stroke-linecap: round;
+.portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-.couple-art .jasmine {
-    fill: none;
-    stroke: #fffaf0;
-    stroke-width: 5;
-    stroke-linecap: round;
-    stroke-dasharray: 0.1 9;
-}
-
-.couple-art .arm {
-    fill: none;
-    stroke-width: 11;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.couple-art .person--bride .arm { stroke: var(--bride-skin); }
-.couple-art .person--groom .arm { stroke: var(--groom-skin); }
-
-.couple-art .sleeve {
-    fill: none;
-    stroke-width: 15;
-    stroke-linecap: round;
-    stroke: var(--bride-outfit);
-}
-
-.couple-art .sleeve--shirt { stroke: #fbf7ee; }
-
-/* Finished state: hands folded. The scene shows the arms-down pose first. */
-.couple-art .arms--down { opacity: 0; }
-
-/* Only the chosen jewellery set is drawn. */
-.couple-art .jewel { display: none; }
-.couple-art[data-bride-jewellery="temple_gold"] .person--bride .jewel--temple_gold,
-.couple-art[data-bride-jewellery="simple"] .person--bride .jewel--simple,
-.couple-art[data-groom-jewellery="chain"] .person--groom .jewel--chain { display: inline; }
-
-.garland__flowers,
-.garland__roses {
-    fill: none;
-    stroke-linecap: round;
-}
-
-.garland__flowers {
-    stroke: var(--garland-flower);
-    stroke-width: 10;
-    stroke-dasharray: 0.1 10;
-}
-
-.garland__roses {
-    stroke: var(--garland-accent);
-    stroke-width: 7;
-    stroke-dasharray: 0.1 30;
-    stroke-dashoffset: -5;
-}
-
-.garland__pendant { fill: var(--garland-accent); }
-
-.welcome {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2svh;
+.portrait--empty {
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    color: rgb(236 208 143 / 0.75);
+    text-shadow: none;
 }
 
 .welcome__names {
-    font-family: var(--font-en);
-    font-size: clamp(1.4rem, 6.4vw, 2.2rem);
-    line-height: 1.3;
+    line-height: 1.15;
+    color: var(--gold-light);
+    text-wrap: balance;
 }
 
-.welcome__line { font-size: 1rem; }
+.welcome__names[lang="en"] {
+    font-family: var(--font-en-name);
+    font-size: clamp(3rem, 13vw, 5.2rem);
+}
+
+.welcome__names[lang="ta"] {
+    font-family: var(--font-tamil-heading);
+    font-size: clamp(1.8rem, 7.5vw, 3rem);
+    line-height: 1.5;
+}
+
+.welcome__and {
+    font-family: var(--font-en);
+    font-style: italic;
+    font-size: 0.45em;
+    color: var(--ivory-dim);
+    vertical-align: 0.3em;
+}
+
+.welcome__and:lang(ta) { font-style: normal; }
 
 .brand {
-    margin-top: 1svh;
-    font-size: 0.8rem;
-    color: var(--red);
+    margin-top: 2svh;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--ivory-dim);
     text-decoration: underline;
-    text-underline-offset: 3px;
+    text-decoration-color: rgb(212 168 79 / 0.6);
+    text-underline-offset: 4px;
 }
 
-/* ── Wider screens ──────────────────────────────────────────── */
+/* ── Wide screens: the picture fills the screen, the words stay in a centred column ── */
 
-@media (min-width: 768px) {
-    .banana--left { left: 2vw; }
-    .banana--right { right: 2vw; }
-    .couple__arch { left: 18vw; right: 18vw; }
-    .muhurtham__frame { --frame-x: 10vw; --frame-y: 4svh; }
-    .bell--left { left: 18vw; }
-    .bell--right { right: 18vw; }
+@media (min-aspect-ratio: 1/1) and (min-width: 768px) {
+    .scene__shade {
+        background:
+            radial-gradient(ellipse 46% 62% at 50% 50%, rgb(14 3 6 / 0.66) 0%, rgb(14 3 6 / 0.3) 60%, rgb(14 3 6 / 0) 100%),
+            linear-gradient(180deg, rgb(14 3 6 / 0.5) 0%, rgb(14 3 6 / 0.1) 30%, rgb(14 3 6 / 0.1) 65%, rgb(14 3 6 / 0.7) 100%);
+    }
+
+    .scene--opening .scene__stage { justify-content: center; padding-bottom: max(48px, env(safe-area-inset-bottom)); }
+
+    .scene--opening .scene__shade {
+        background:
+            radial-gradient(ellipse 42% 58% at 50% 55%, rgb(14 3 6 / 0.72) 0%, rgb(14 3 6 / 0.3) 65%, rgb(14 3 6 / 0) 100%),
+            linear-gradient(0deg, rgb(14 3 6 / 0.7) 0%, rgb(14 3 6 / 0) 40%);
+    }
+
+    .scene--opening .scene__art img { object-position: center; }
+
+    .lede { font-size: clamp(1.3rem, 1.8vw, 1.75rem); }
+    .scene .eyebrow { font-size: 0.85rem; }
+
+    .photos { --frame-h: min(40svh, (100svh - 16rem) / var(--rows)); }
+    .photos__grid--two { grid-template-columns: repeat(min(var(--count), 4), auto); }
+    .photos__grid--two .photo,
+    .photos__grid--three .photo { width: calc(min(40svh, (100svh - 16rem) / var(--rows)) * 0.8); }
 }

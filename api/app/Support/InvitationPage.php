@@ -260,6 +260,47 @@ class InvitationPage
         return Carbon::parse("{$date} {$time}", config('invitations.timezone'))->toIso8601String();
     }
 
+    /** Every scene's pictures, by scene name; see sceneArt(). */
+    private ?array $sceneArt = null;
+
+    /**
+     * A scene's full-screen picture, found by the template's slug in
+     * public/scenes/{slug}/ (made by scripts/scene-art.mjs): `{scene}-phone-{width}.webp`
+     * (portrait) and, if there is one, `{scene}-desktop-{width}.webp` (landscape).
+     * A scene without a desktop picture uses the portrait one everywhere.
+     *
+     * @return array{phone: string, desktop: string, src: string}|null  srcset lists, and the largest portrait file
+     */
+    public function sceneArt(string $scene): ?array
+    {
+        if ($this->sceneArt === null) {
+            $slug = $this->invitation->template->slug;
+            $files = [];
+            foreach (glob(public_path("scenes/{$slug}/*.webp")) ?: [] as $path) {
+                if (preg_match('/^(.+)-(phone|desktop)-(\d+)\.webp$/', basename($path), $m)) {
+                    // The file's time in the address, so a redrawn picture isn't served from cache.
+                    $files[$m[1]][$m[2]][(int) $m[3]] = asset("scenes/{$slug}/".basename($path)).'?v='.filemtime($path);
+                }
+            }
+
+            $this->sceneArt = [];
+            foreach ($files as $name => $shapes) {
+                if (! isset($shapes['phone'])) {
+                    continue;
+                }
+                $srcset = fn (array $byWidth) => collect($byWidth)->sortKeys()->map(fn ($url, $width) => "{$url} {$width}w")->implode(', ');
+                ksort($shapes['phone']);
+                $this->sceneArt[$name] = [
+                    'phone'   => $srcset($shapes['phone']),
+                    'desktop' => $srcset($shapes['desktop'] ?? $shapes['phone']),
+                    'src'     => end($shapes['phone']),
+                ];
+            }
+        }
+
+        return $this->sceneArt[$scene] ?? null;
+    }
+
     /** The Vite entry of this invitation's template. */
     public function viewerEntry(): string
     {
