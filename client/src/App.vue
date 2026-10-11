@@ -1,16 +1,5 @@
 <template>
-  <!-- Over the home page's full-screen photo, the header is transparent. -->
-  <header class="site-header" :class="{ 'site-header--overlay': route.name === 'home' }" :data-theme="route.name === 'home' ? 'dark' : null">
-    <router-link to="/" class="brand">Invitations</router-link>
-    <nav v-if="ready" class="site-header__nav">
-      <template v-if="user">
-        <router-link to="/invitations">My invitations</router-link>
-        <img v-if="user.avatar_url" :src="user.avatar_url" alt="" width="32" height="32" class="avatar" referrerpolicy="no-referrer" />
-        <button type="button" class="link-button" :disabled="signingOut" @click="signOut">Sign out</button>
-      </template>
-      <a v-else :href="signInUrl(route.fullPath)">Sign in</a>
-    </nav>
-  </header>
+  <SiteNav />
 
   <p v-if="signInFailed" class="notice notice--top" role="alert">
     Sign-in didn't finish. Please try again.
@@ -22,14 +11,14 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import SiteNav from './components/SiteNav.vue'
 import { useAuth } from './composables/useAuth'
 
 const route = useRoute()
 const router = useRouter()
-const { user, ready, fetchMe, signInUrl, logout } = useAuth()
+const { fetchMe } = useAuth()
 
 const signInFailed = ref(false)
-const signingOut = ref(false)
 
 fetchMe()
 
@@ -40,14 +29,4 @@ watch(() => route.query.signin, (value) => {
   const { signin: _done, ...query } = route.query
   router.replace({ query })
 })
-
-async function signOut() {
-  signingOut.value = true
-  try {
-    await logout()
-    router.push('/')
-  } finally {
-    signingOut.value = false
-  }
-}
 </script>

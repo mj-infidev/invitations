@@ -24,7 +24,8 @@ const routes = [
     path: '/invitations/:id(\\d+)',
     name: 'builder',
     component: () => import('../views/Builder.vue'),
-    meta: { requiresAuth: true, title: 'Edit invitation' },
+    // Has its own sticky bar: the site nav scrolls away here.
+    meta: { requiresAuth: true, title: 'Edit invitation', navScrollsAway: true },
   },
   // After paying: the link, Copy, and Share on WhatsApp.
   {
@@ -38,6 +39,14 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
+  // Links to a home page section (/#demo) land below the site nav. Coming from
+  // another page, the home page needs a moment to be on screen first.
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+    if (!to.hash) return { top: 0 }
+    const target = { el: to.hash, top: 64, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }
+    return to.name === from.name ? target : new Promise((resolve) => setTimeout(() => resolve(target), 350))
+  },
 })
 
 // Pages that need an account send a guest to Google, and Google sends them

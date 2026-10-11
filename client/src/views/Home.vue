@@ -29,7 +29,7 @@
     </section>
 
     <!-- How it works -->
-    <section class="steps section">
+    <section id="how-it-works" class="steps section">
       <div class="steps__photo" data-reveal>
         <img :src="photos.details1122" :srcset="`${photos.details560} 560w, ${photos.details1122} 1122w`" sizes="(min-width: 900px) 42vw, 100vw" alt="A blank invitation card and envelope on dark silk, with roses, a gold ribbon and two rings" loading="lazy" />
       </div>
@@ -78,7 +78,7 @@
     </section>
 
     <!-- Price -->
-    <section class="price section">
+    <section id="pricing" class="price section">
       <p class="eyebrow" data-reveal>Pricing</p>
       <h2 data-reveal><span class="line">One price.</span> <span class="line">Everything included.</span></h2>
       <div class="price__card" data-reveal>
@@ -113,7 +113,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import DevicePreview from '@shared/components/DevicePreview.vue'
-import { api } from '../lib/api'
+import { useTemplates } from '../composables/useTemplates'
 import heroDesktop960 from '../assets/home/hero-desktop-960.webp'
 import heroDesktop1672 from '../assets/home/hero-desktop-1672.webp'
 import heroMobile640 from '../assets/home/hero-mobile-640.webp'
@@ -135,9 +135,7 @@ const STEPS = [
 
 const root = ref(null)
 const demoSection = ref(null)
-const templates = ref([])
-// The first template is the one the page shows and links to.
-const template = computed(() => templates.value[0] ?? null)
+const { templates, template, createLink } = useTemplates()
 const showDemo = ref(false)
 const demoDevice = ref('phone')
 // The phone and the window share one height: 640 px, or less on short screens
@@ -150,7 +148,6 @@ const year = new Date().getFullYear()
 // "Tamil Hindu wedding", or every template's name once there are more.
 const templateNames = computed(() => templates.value.map((t) => t.name).join(' · ') || 'Tamil Hindu wedding')
 
-const createLink = computed(() => ({ name: 'create', query: { template: template.value?.slug ?? 'tamil-hindu-wedding' } }))
 const demoUrl = computed(() => template.value?.demo_url ?? null)
 const price = computed(() => (template.value ? `₹${(template.value.price_paise / 100).toLocaleString('en-IN')}` : '₹499'))
 
@@ -161,7 +158,7 @@ function scrollToDemo() {
 let mm = null
 let observer = null
 
-onMounted(async () => {
+onMounted(() => {
   // Gentle reveals; none at all for guests who asked for less motion.
   mm = gsap.matchMedia()
   mm.add('(prefers-reduced-motion: no-preference)', () => {
@@ -189,12 +186,6 @@ onMounted(async () => {
     }
   }, { rootMargin: '100% 0px' })
   observer.observe(demoSection.value)
-
-  try {
-    templates.value = (await api('/api/templates')).data
-  } catch {
-    // The page still works on its defaults; Create goes to the usual template.
-  }
 })
 
 onBeforeUnmount(() => {
